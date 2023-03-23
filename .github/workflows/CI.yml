@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  merge_group:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+# Common environment variables
+env:
+  RUSTFLAGS: "-C debuginfo=1"
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  LOCK_FILE: Cargo.lock
+  RUST_VERSION: nightly-2023-02-02
+
+jobs:
+  style-check:
+    name: style-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - run: |
+          rustup set auto-self-update disable
+          rustup toolchain install ${RUST_VERSION} --profile minimal
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            ./target
+          key: debug-${{ runner.os }}
+          restore-keys: |
+            debug-${{ runner.os }}
+            debug-
+      - name: Setup Build Environment
+        run: |
+          sudo apt update
+          sudo apt install --yes protobuf-compiler
+      - name: Run Style Check
+        run: |
+          make clippy
+          make fmt
+      - name: Build
+        run: |
+          cargo build --workspace
