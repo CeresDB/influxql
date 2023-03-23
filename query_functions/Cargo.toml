@@ -1,0 +1,10 @@
+[package]
+name = "query_functions"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies] # In alphabetical order
+regex = "1"
+regex-syntax = "0.6.29"

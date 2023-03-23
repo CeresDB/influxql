@@ -1,0 +1,19 @@
+[package]
+name = "datafusion_util"
+description = "Datafusion utilities"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+async-trait = "0.1"
+datafusion = { workspace = true }
+futures = "0.3"
+observability_deps = { path = "../observability_deps" }
+pin-project = "1.0"
+tokio = { version = "1.26", features = ["parking_lot", "sync"] }
+tokio-stream = "0.1"
+
+[dev-dependencies]
+schema = { path = "../schema" }

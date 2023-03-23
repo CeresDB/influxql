@@ -1,0 +1,58 @@
+//! Compiles Protocol Buffers into native Rust types.
+
+use std::env;
+use std::path::{Path, PathBuf};
+
+type Error = Box<dyn std::error::Error>;
+type Result<T, E = Error> = std::result::Result<T, E>;
+
+fn main() -> Result<()> {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("protos");
+
+    generate_grpc_types(&root)?;
+
+    Ok(())
+}
+
+fn generate_grpc_types(root: &Path) -> Result<()> {
+    let querier_path = root.join("influxdata/iox/querier/v1");
+
+    let proto_files = vec![querier_path.join("flight.proto")];
+
+    // Tell cargo to recompile if any of these proto files are changed
+    for proto_file in &proto_files {
+        println!("cargo:rerun-if-changed={}", proto_file.display());
+    }
+
+    let mut config = prost_build::Config::new();
+
+    config
+        .compile_well_known_types()
+        .disable_comments([".google"])
+        .extern_path(".google.protobuf", "::pbjson_types")
+        .btree_map([
+            ".influxdata.iox.ingester.v1.IngesterQueryResponseMetadata.unpersisted_partitions",
+        ]);
+
+    let descriptor_path = PathBuf::from(env::var("OUT_DIR").unwrap()).join("proto_descriptor.bin");
+    tonic_build::configure()
+        .file_descriptor_set_path(&descriptor_path)
+        // protoc in ubuntu builder needs this option
+        .protoc_arg("--experimental_allow_proto3_optional")
+        .compile_with_config(config, &proto_files, &[root])?;
+
+    let descriptor_set = std::fs::read(descriptor_path)?;
+
+    pbjson_build::Builder::new()
+        .register_descriptors(&descriptor_set)?
+        .build(&[
+            ".influxdata.iox",
+            ".influxdata.pbdata",
+            ".influxdata.platform.storage",
+            ".influxdata.platform.errors",
+            ".google.longrunning",
+            ".google.rpc",
+        ])?;
+
+    Ok(())
+}
