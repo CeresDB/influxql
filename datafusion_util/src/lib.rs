@@ -19,7 +19,6 @@ use std::task::{Context, Poll};
 
 use datafusion::arrow::array::BooleanArray;
 use datafusion::arrow::compute::filter_record_batch;
-use datafusion::arrow::datatypes::DataType;
 use datafusion::common::{DataFusionError, ToDFSchema};
 use datafusion::datasource::MemTable;
 use datafusion::execution::context::TaskContext;
@@ -92,10 +91,12 @@ impl AsExpr for Expr {
 /// the type of constant that a tag would be compared to)
 pub fn lit_dict(value: &str) -> Expr {
     // expr has been type coerced
-    lit(ScalarValue::Dictionary(
-        Box::new(DataType::Int32),
-        Box::new(ScalarValue::new_utf8(value)),
-    ))
+    lit(ScalarValue::new_utf8(value))
+    // TODO: ceresdb don't support dictionary now
+    // lit(ScalarValue::Dictionary(
+    //     Box::new(DataType::Int32),
+    //     Box::new(ScalarValue::new_utf8(value)),
+    // ))
 }
 
 /// Creates expression like:
