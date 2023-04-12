@@ -10,9 +10,9 @@
     clippy::dbg_macro
 )]
 
-pub mod optimize;
 pub mod dictionary;
 pub mod display;
+pub mod optimize;
 pub mod string;
 
 /// This has a collection of testing helper functions
