@@ -5,7 +5,7 @@ use datafusion::logical_expr::{Expr, LogicalPlan, LogicalPlanBuilder};
 use datafusion_util::AsExpr;
 use generated_types::influxdata::iox::querier::v1::influx_ql_metadata::TagKeyColumn;
 use influxdb_influxql_parser::common::OrderByClause;
-use influxdb_influxql_parser::expression::{Expr as IQLExpr, VarRefDataType};
+use influxdb_influxql_parser::expression::{Expr as IQLExpr, VarRef, VarRefDataType};
 use influxdb_influxql_parser::select::{Field, SelectStatement};
 use schema::INFLUXQL_MEASUREMENT_COLUMN_NAME;
 use std::collections::HashMap;
@@ -43,10 +43,10 @@ pub(super) fn make_tag_key_column_meta(
         .iter()
         .enumerate()
         .filter_map(|(index, f)| match &f.expr {
-            IQLExpr::VarRef {
+            IQLExpr::VarRef(VarRef {
                 name,
                 data_type: Some(VarRefDataType::Tag) | None,
-            } => Some((name.deref().as_str(), index + START_INDEX)),
+            }) => Some((name.deref().as_str(), index + START_INDEX)),
             _ => None,
         })
         .collect::<HashMap<_, _>>();
@@ -113,29 +113,49 @@ pub(super) fn plan_with_sort(
     let schema = plan.schema();
 
     if !group_by_tag_set.is_empty() {
-        // Adding `LIMIT` or `OFFSET` with a `GROUP BY tag, ...` clause is not supported
-        //
-        // See: https://github.com/influxdata/influxdb_iox/issues/6920
-        if select.offset.is_some() || select.limit.is_some() {
-            return Err(DataFusionError::NotImplemented(
-                "GROUP BY combined with LIMIT or OFFSET clause".to_owned(),
-            ));
-        }
-
         series_sort.extend(map_to_expr(schema, group_by_tag_set));
     };
 
-    series_sort.push(Expr::sort(
-        "time".as_expr(),
-        match select.order_by {
-            // Default behaviour is to sort by time in ascending order if there is no ORDER BY
-            None | Some(OrderByClause::Ascending) => true,
-            Some(OrderByClause::Descending) => false,
-        },
-        false,
-    ));
+    series_sort.push(select.order_by.to_sort_expr());
 
     series_sort.extend(map_to_expr(schema, projection_tag_set));
 
     LogicalPlanBuilder::from(plan).sort(series_sort)?.build()
+}
+
+/// Trait to convert the receiver to a [`Expr::Sort`] expression.
+pub(super) trait ToSortExpr {
+    /// Create a sort expression.
+    fn to_sort_expr(&self) -> Expr;
+}
+
+impl ToSortExpr for Option<OrderByClause> {
+    fn to_sort_expr(&self) -> Expr {
+        "time".as_expr().sort(
+            match self {
+                // Default behaviour is to sort by time in ascending order if there is no ORDER BY
+                None | Some(OrderByClause::Ascending) => true,
+                Some(OrderByClause::Descending) => false,
+            },
+            false,
+        )
+    }
+}
+
+/// Map the fields to DataFusion [`Expr::Column`] expressions, excluding those columns that
+/// are [`DataType::Null`]'s.
+pub(super) fn fields_to_exprs_no_nulls<'a>(
+    schema: &'a DFSchemaRef,
+    fields: &'a [&str],
+) -> impl Iterator<Item = Expr> + 'a {
+    fields
+        .iter()
+        .filter(|f| {
+            if let Ok(df) = schema.field_with_unqualified_name(f) {
+                *df.data_type() != DataType::Null
+            } else {
+                false
+            }
+        })
+        .map(|f| f.as_expr())
 }
