@@ -13,6 +13,7 @@
 pub mod config;
 pub mod sender;
 pub mod watch;
+pub mod sort_exprs;
 
 use std::sync::Arc;
 use std::task::{Context, Poll};
