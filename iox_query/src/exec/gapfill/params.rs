@@ -73,7 +73,11 @@ impl GapFillParams {
 
         // Call date_bin on the timestamps to find the first and last time bins
         // for each series
-        let mut args = vec![stride, i64_to_columnar_ts(first_ts), origin];
+        let mut args = vec![
+            stride,
+            i64_to_columnar_ts(first_ts),
+            millis_to_nanos(&origin)?,
+        ];
         let first_ts = first_ts
             .map(|_| extract_timestamp_nanos(&date_bin(&args)?))
             .transpose()?;
@@ -120,9 +124,15 @@ fn i64_to_columnar_ts(i: Option<i64>) -> ColumnarValue {
     }
 }
 
+fn millis_to_nanos(cv: &ColumnarValue) -> Result<ColumnarValue> {
+    extract_timestamp_nanos(cv)
+        .map(|v| ColumnarValue::Scalar(ScalarValue::TimestampNanosecond(Some(v), None)))
+}
+
 fn extract_timestamp_nanos(cv: &ColumnarValue) -> Result<i64> {
     Ok(match cv {
         ColumnarValue::Scalar(ScalarValue::TimestampNanosecond(Some(v), _)) => *v,
+        ColumnarValue::Scalar(ScalarValue::TimestampMillisecond(Some(v), _)) => *v * 1000_000,
         _ => {
             return Err(DataFusionError::Execution(
                 "gap filling argument must be a scalar timestamp".to_string(),

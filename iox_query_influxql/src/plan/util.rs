@@ -26,10 +26,12 @@ pub(in crate::plan) fn binary_operator_to_df_operator(op: BinaryOperator) -> Ope
 /// Return the IOx schema for the specified DataFusion schema.
 pub(in crate::plan) fn schema_from_df(schema: &DFSchema) -> Result<Schema> {
     let s: Arc<arrow::datatypes::Schema> = Arc::new(schema.into());
-    s.try_into().map_err(|err| {
-        DataFusionError::Internal(format!(
-            "unable to convert DataFusion schema to IOx schema: {err}"
-        ))
+    crate::plan::hack::ceresdb_schema_to_influxdb(s).and_then(|s| {
+        s.try_into().map_err(|err| {
+            DataFusionError::Internal(format!(
+                "unable to convert DataFusion schema to IOx schema: {err}"
+            ))
+        })
     })
 }
 
