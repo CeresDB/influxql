@@ -52,12 +52,6 @@ pub fn ceresdb_schema_to_influxdb(arrow_schema: Arc<Schema>) -> Result<Arc<Schem
                 }
             };
 
-            let data_type = if i == time_idx {
-                // this is required by iox, time is ms unit in ceresdb
-                schema::TIME_DATA_TYPE()
-            } else {
-                data_type.clone()
-            };
             // tsid column is treated as field, so it's nullable
             let nullable = if "tsid" == f.name() {
                 true
@@ -68,7 +62,7 @@ pub fn ceresdb_schema_to_influxdb(arrow_schema: Arc<Schema>) -> Result<Arc<Schem
                 "iox::column::type".to_string(),
                 influxql_col_type.to_string(),
             )]);
-            Ok(Field::new(f.name(), data_type, nullable).with_metadata(md))
+            Ok(Field::new(f.name(), data_type.clone(), nullable).with_metadata(md))
         })
         .collect::<Result<_>>()?;
 
