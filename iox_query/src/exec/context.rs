@@ -115,7 +115,6 @@ impl ExtensionPlanner for IOxExtensionPlanner {
 /// Configuration for an IOx execution context
 ///
 /// Created from an Executor
-/// 
 /// We just keep it for here building without error so many contents have been removed.
 pub struct IOxSessionContext {
     inner: SessionContext,
