@@ -64,7 +64,7 @@ pub fn ceresdb_schema_to_influxdb(arrow_schema: Arc<Schema>) -> Result<Arc<Schem
             )]);
             Ok(Field::new(f.name(), data_type.clone(), nullable).with_metadata(md))
         })
-        .collect::<Result<_>>()?;
+        .collect::<Result<Vec<_>>>()?;
 
     Ok(Arc::new(Schema::new_with_metadata(fields, md.clone())))
 }

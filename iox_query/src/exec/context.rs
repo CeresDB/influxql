@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use datafusion::error::{DataFusionError as Error, Result};
+use datafusion::error::Result;
 use datafusion::execution::context::{QueryPlanner, SessionState};
 use datafusion::logical_expr::UserDefinedLogicalNode;
 use datafusion::physical_plan::planner::{DefaultPhysicalPlanner, ExtensionPlanner};
@@ -135,30 +135,6 @@ impl IOxSessionContext {
         &self,
         logical_plan: &LogicalPlan,
     ) -> Result<Arc<dyn ExecutionPlan>> {
-        // Make nicer erorrs for unsupported SQL
-        // (By default datafusion returns Internal Error)
-        match &logical_plan {
-            LogicalPlan::CreateCatalog(_) => {
-                return Err(Error::NotImplemented("CreateCatalog".to_string()));
-            }
-            LogicalPlan::CreateCatalogSchema(_) => {
-                return Err(Error::NotImplemented("CreateCatalogSchema".to_string()));
-            }
-            LogicalPlan::CreateMemoryTable(_) => {
-                return Err(Error::NotImplemented("CreateMemoryTable".to_string()));
-            }
-            LogicalPlan::DropTable(_) => {
-                return Err(Error::NotImplemented("DropTable".to_string()));
-            }
-            LogicalPlan::DropView(_) => {
-                return Err(Error::NotImplemented("DropView".to_string()));
-            }
-            LogicalPlan::CreateView(_) => {
-                return Err(Error::NotImplemented("CreateView".to_string()));
-            }
-            _ => (),
-        }
-
         let ctx = self.child_ctx("create_physical_plan");
         let physical_plan = ctx.inner.state().create_physical_plan(logical_plan).await?;
 

@@ -102,6 +102,7 @@ impl StreamSplitNode {
     /// Create a new `StreamSplitNode` using `split_exprs` to divide the
     /// rows. All `split_exprs` must evaluate to a boolean otherwise a
     /// runtime error will occur.
+    #[allow(dead_code)]
     pub fn new(input: LogicalPlan, split_exprs: Vec<Expr>) -> Self {
         Self { input, split_exprs }
     }
