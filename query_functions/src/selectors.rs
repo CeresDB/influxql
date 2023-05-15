@@ -99,7 +99,7 @@ use std::{fmt::Debug, sync::Arc};
 
 use arrow::{
     array::ArrayRef,
-    datatypes::{DataType, Field},
+    datatypes::{DataType, Field, Fields},
 };
 use datafusion::{
     error::{DataFusionError, Result as DataFusionResult},
@@ -468,7 +468,7 @@ impl SelectorOutput {
             Self::Value => input_type.clone(),
             // timestamps are always the same type
             Self::Time => TIME_DATA_TYPE(),
-            Self::Struct => DataType::Struct(make_struct_fields(input_type.clone())),
+            Self::Struct => DataType::Struct(Fields::from(make_struct_fields(input_type.clone()))),
         }
     }
 }
