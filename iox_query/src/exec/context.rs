@@ -55,6 +55,7 @@ impl ExtensionPlanner for IOxExtensionPlanner {
         session_state: &SessionState,
     ) -> Result<Option<Arc<dyn ExecutionPlan>>> {
         log::debug!("plan_extension node:{}--{:?}", node.name(), node);
+        println!("plan_extension node:{}--{:?}", node.name(), node);
 
         let any = node.as_any();
         let plan = if let Some(schema_pivot) = any.downcast_ref::<SchemaPivotNode>() {
