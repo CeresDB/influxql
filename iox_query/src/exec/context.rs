@@ -54,6 +54,8 @@ impl ExtensionPlanner for IOxExtensionPlanner {
         physical_inputs: &[Arc<dyn ExecutionPlan>],
         session_state: &SessionState,
     ) -> Result<Option<Arc<dyn ExecutionPlan>>> {
+        log::debug!("plan_extension node:{}--{:?}", node.name(), node);
+
         let any = node.as_any();
         let plan = if let Some(schema_pivot) = any.downcast_ref::<SchemaPivotNode>() {
             assert_eq!(physical_inputs.len(), 1, "Inconsistent number of inputs");
