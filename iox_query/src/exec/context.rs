@@ -1,10 +1,11 @@
 use async_trait::async_trait;
 use datafusion::error::Result;
 use datafusion::execution::context::{QueryPlanner, SessionState};
-use datafusion::logical_expr::UserDefinedLogicalNode;
+use datafusion::logical_expr::{UserDefinedLogicalNode, UserDefinedLogicalNodeCore};
 use datafusion::physical_plan::planner::{DefaultPhysicalPlanner, ExtensionPlanner};
 use datafusion::physical_plan::PhysicalPlanner;
 use datafusion::{logical_expr::LogicalPlan, physical_plan::ExecutionPlan, prelude::*};
+use std::any::TypeId;
 use std::sync::Arc;
 
 use crate::exec::non_null_checker::NonNullCheckerExec;
@@ -56,8 +57,15 @@ impl ExtensionPlanner for IOxExtensionPlanner {
     ) -> Result<Option<Arc<dyn ExecutionPlan>>> {
         log::debug!("plan_extension node:{}--{:?}", node.name(), node);
         println!("plan_extension node:{}--{:?}", node.name(), node);
-
         let any = node.as_any();
+        println!(
+            "plan_extension type_id:{:?}--{:?}--{:?}",
+            TypeId::of::<GapFill>(),
+            any.type_id(),
+            TypeId::of::<dyn UserDefinedLogicalNode>(),
+            // TypeId::of::<dyn UserDefinedLogicalNodeCore>(),
+        );
+
         let plan = if let Some(schema_pivot) = any.downcast_ref::<SchemaPivotNode>() {
             assert_eq!(physical_inputs.len(), 1, "Inconsistent number of inputs");
             Some(Arc::new(SchemaPivotExec::new(
