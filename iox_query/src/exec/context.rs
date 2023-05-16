@@ -1,20 +1,16 @@
 use async_trait::async_trait;
 use datafusion::error::Result;
 use datafusion::execution::context::{QueryPlanner, SessionState};
-use datafusion::logical_expr::{UserDefinedLogicalNode, UserDefinedLogicalNodeCore};
+use datafusion::logical_expr::UserDefinedLogicalNode;
 use datafusion::physical_plan::planner::{DefaultPhysicalPlanner, ExtensionPlanner};
 use datafusion::physical_plan::PhysicalPlanner;
 use datafusion::{logical_expr::LogicalPlan, physical_plan::ExecutionPlan, prelude::*};
 use std::any::TypeId;
 use std::sync::Arc;
 
-use crate::exec::non_null_checker::NonNullCheckerExec;
-use crate::exec::schema_pivot::SchemaPivotExec;
 use crate::exec::split::StreamSplitExec;
 
 use super::gapfill::{plan_gap_fill, GapFill};
-use super::non_null_checker::NonNullCheckerNode;
-use super::schema_pivot::SchemaPivotNode;
 use super::split::StreamSplitNode;
 
 /// This structure implements the DataFusion notion of "query planner"
@@ -66,20 +62,7 @@ impl ExtensionPlanner for IOxExtensionPlanner {
             // TypeId::of::<dyn UserDefinedLogicalNodeCore>(),
         );
 
-        let plan = if let Some(schema_pivot) = any.downcast_ref::<SchemaPivotNode>() {
-            assert_eq!(physical_inputs.len(), 1, "Inconsistent number of inputs");
-            Some(Arc::new(SchemaPivotExec::new(
-                Arc::clone(&physical_inputs[0]),
-                schema_pivot.schema().as_ref().clone().into(),
-            )) as Arc<dyn ExecutionPlan>)
-        } else if let Some(non_null_checker) = any.downcast_ref::<NonNullCheckerNode>() {
-            assert_eq!(physical_inputs.len(), 1, "Inconsistent number of inputs");
-            Some(Arc::new(NonNullCheckerExec::new(
-                Arc::clone(&physical_inputs[0]),
-                non_null_checker.schema().as_ref().clone().into(),
-                non_null_checker.value(),
-            )) as Arc<dyn ExecutionPlan>)
-        } else if let Some(stream_split) = any.downcast_ref::<StreamSplitNode>() {
+        let plan = if let Some(stream_split) = any.downcast_ref::<StreamSplitNode>() {
             assert_eq!(
                 logical_inputs.len(),
                 1,
