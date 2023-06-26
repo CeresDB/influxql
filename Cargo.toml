@@ -9,5 +9,5 @@ license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 arrow = { version = "38.0.0" }
-datafusion = { git = "https://github.com/jiacai2050/arrow-datafusion.git", rev = "13314c37020b90246db9b80f8294370c06e61018", default-features = false }
+datafusion = { git = "https://github.com/ceresdb/arrow-datafusion.git", rev = "5215fb6a9298bf0baba8a22bc9c6e4554dc06708", default-features = false }
 hashbrown = { version = "0.13.2" }
