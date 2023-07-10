@@ -139,56 +139,46 @@ impl TimeRange {
     }
 
     fn with_lower(self, start: Bound<Expr>) -> Self {
-        let max_start ;
-        match (start, self.0.start) {
+        let max_start = match (start, self.0.start) {
             (Bound::Included(x), Bound::Included(y)) => {
-                max_start = match x > y {
-                    true => {
-                        Bound::Included(x)
-                    },
-                    false => Bound::Included(y),
-                };
-
+                if x > y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Included(y)
+                }
             }
             (Bound::Included(x), Bound::Excluded(y)) => {
-                max_start = match x > y {
-                    true => {
-                        Bound::Included(x)
-                    },
-                    false => Bound::Excluded(y),
-                };
+                if x > y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Excluded(y)
+                }
             }
             (Bound::Excluded(x), Bound::Included(y)) => {
-                max_start = match x >= y {
-                    true => {
-                        Bound::Excluded(x)
-                    },
-                    false => Bound::Included(y),
-                };
+                if x >= y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Included(y)
+                }
             }
             (Bound::Excluded(x), Bound::Excluded(y)) => {
-                max_start = match x > y {
-                    true => {
-                        Bound::Excluded(x)
-                    },
-                    false => Bound::Excluded(y),
-                };
-            }
-            (Bound::Unbounded, y) =>{
-                max_start = match  y {
-                        Bound::Included(x) => Bound::Included(x),
-                        Bound::Excluded(x) => Bound::Excluded(x),
-                        Bound::Unbounded => Bound::Unbounded,
+                if x > y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Excluded(y)
                 }
             }
-            (x, Bound::Unbounded) =>{
-                max_start = match  x {
-                        Bound::Included(x) => Bound::Included(x),
-                        Bound::Excluded(x) => Bound::Excluded(x),
-                        Bound::Unbounded => Bound::Unbounded,
-                }
-            }
-        }
+            (Bound::Unbounded, y) => match y {
+                Bound::Included(x) => Bound::Included(x),
+                Bound::Excluded(x) => Bound::Excluded(x),
+                Bound::Unbounded => Bound::Unbounded,
+            },
+            (x, Bound::Unbounded) => match x {
+                Bound::Included(x) => Bound::Included(x),
+                Bound::Excluded(x) => Bound::Excluded(x),
+                Bound::Unbounded => Bound::Unbounded,
+            },
+        };
         Self(Range {
             start: max_start,
             end: self.0.end,
@@ -196,56 +186,46 @@ impl TimeRange {
     }
 
     fn with_upper(self, end: Bound<Expr>) -> Self {
-        let min_end ;
-        match (end, self.0.end) {
+        let min_end = match (end, self.0.end) {
             (Bound::Included(x), Bound::Included(y)) => {
-                min_end = match x < y {
-                    true => {
-                        Bound::Included(x)
-                    },
-                    false => Bound::Included(y),
-                };
-
+                if x < y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Included(y)
+                }
             }
             (Bound::Included(x), Bound::Excluded(y)) => {
-                min_end = match x < y {
-                    true => {
-                        Bound::Included(x)
-                    },
-                    false => Bound::Excluded(y),
-                };
+                if x < y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Excluded(y)
+                }
             }
             (Bound::Excluded(x), Bound::Included(y)) => {
-                min_end = match x <= y {
-                    true => {
-                        Bound::Excluded(x)
-                    },
-                    false => Bound::Included(y),
-                };
+                if x <= y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Included(y)
+                }
             }
             (Bound::Excluded(x), Bound::Excluded(y)) => {
-                min_end = match x < y {
-                    true => {
-                        Bound::Excluded(x)
-                    },
-                    false => Bound::Excluded(y),
-                };
-            }
-            (Bound::Unbounded, y) =>{
-                min_end = match  y {
-                        Bound::Included(x) => Bound::Included(x),
-                        Bound::Excluded(x) => Bound::Excluded(x),
-                        Bound::Unbounded => Bound::Unbounded,
+                if x < y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Excluded(y)
                 }
             }
-            (x, Bound::Unbounded) =>{
-                min_end = match  x {
-                        Bound::Included(x) => Bound::Included(x),
-                        Bound::Excluded(x) => Bound::Excluded(x),
-                        Bound::Unbounded => Bound::Unbounded,
-                }
-            }
-        }
+            (Bound::Unbounded, y) => match y {
+                Bound::Included(x) => Bound::Included(x),
+                Bound::Excluded(x) => Bound::Excluded(x),
+                Bound::Unbounded => Bound::Unbounded,
+            },
+            (x, Bound::Unbounded) => match x {
+                Bound::Included(x) => Bound::Included(x),
+                Bound::Excluded(x) => Bound::Excluded(x),
+                Bound::Unbounded => Bound::Unbounded,
+            },
+        };
         Self(Range {
             start: self.0.start,
             end: min_end,
