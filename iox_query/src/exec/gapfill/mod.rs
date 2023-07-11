@@ -218,9 +218,9 @@ impl UserDefinedLogicalNodeCore for GapFill {
             .fill_strategy
             .iter()
             .map(|(e, fs)| match fs {
-                FillStrategy::PrevNullAsIntentional => format!("LOCF(null-as-intentional, {})", e),
-                FillStrategy::PrevNullAsMissing => format!("LOCF({})", e),
-                FillStrategy::LinearInterpolate => format!("INTERPOLATE({})", e),
+                FillStrategy::PrevNullAsIntentional => format!("LOCF(null-as-intentional, {e})"),
+                FillStrategy::PrevNullAsMissing => format!("LOCF({e})"),
+                FillStrategy::LinearInterpolate => format!("INTERPOLATE({e})"),
                 FillStrategy::Null => e.to_string(),
             })
             .collect::<Vec<String>>()
@@ -538,10 +538,10 @@ impl ExecutionPlan for GapFillExec {
                     .iter()
                     .map(|(e, fs)| match fs {
                         FillStrategy::PrevNullAsIntentional => {
-                            format!("LOCF(null-as-intentional, {})", e)
+                            format!("LOCF(null-as-intentional, {e})")
                         }
-                        FillStrategy::PrevNullAsMissing => format!("LOCF({})", e),
-                        FillStrategy::LinearInterpolate => format!("INTERPOLATE({})", e),
+                        FillStrategy::PrevNullAsMissing => format!("LOCF({e})"),
+                        FillStrategy::LinearInterpolate => format!("INTERPOLATE({e})"),
                         FillStrategy::Null => e.to_string(),
                     })
                     .collect();

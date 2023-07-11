@@ -132,7 +132,7 @@ fn millis_to_nanos(cv: &ColumnarValue) -> Result<ColumnarValue> {
 fn extract_timestamp_nanos(cv: &ColumnarValue) -> Result<i64> {
     Ok(match cv {
         ColumnarValue::Scalar(ScalarValue::TimestampNanosecond(Some(v), _)) => *v,
-        ColumnarValue::Scalar(ScalarValue::TimestampMillisecond(Some(v), _)) => *v * 1000_000,
+        ColumnarValue::Scalar(ScalarValue::TimestampMillisecond(Some(v), _)) => *v * 1_000_000,
         _ => {
             return Err(DataFusionError::Execution(
                 "gap filling argument must be a scalar timestamp".to_string(),

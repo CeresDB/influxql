@@ -139,16 +139,80 @@ impl TimeRange {
     }
 
     fn with_lower(self, start: Bound<Expr>) -> Self {
+        let max_start = match (start, self.0.start) {
+            (Bound::Included(x), Bound::Included(y)) => {
+                if x > y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Included(y)
+                }
+            }
+            (Bound::Included(x), Bound::Excluded(y)) => {
+                if x > y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Excluded(y)
+                }
+            }
+            (Bound::Excluded(x), Bound::Included(y)) => {
+                if x >= y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Included(y)
+                }
+            }
+            (Bound::Excluded(x), Bound::Excluded(y)) => {
+                if x > y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Excluded(y)
+                }
+            }
+            (Bound::Unbounded, y) => y,
+            (x, Bound::Unbounded) => x,
+        };
         Self(Range {
-            start,
+            start: max_start,
             end: self.0.end,
         })
     }
 
     fn with_upper(self, end: Bound<Expr>) -> Self {
+        let min_end = match (end, self.0.end) {
+            (Bound::Included(x), Bound::Included(y)) => {
+                if x < y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Included(y)
+                }
+            }
+            (Bound::Included(x), Bound::Excluded(y)) => {
+                if x < y {
+                    Bound::Included(x)
+                } else {
+                    Bound::Excluded(y)
+                }
+            }
+            (Bound::Excluded(x), Bound::Included(y)) => {
+                if x <= y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Included(y)
+                }
+            }
+            (Bound::Excluded(x), Bound::Excluded(y)) => {
+                if x < y {
+                    Bound::Excluded(x)
+                } else {
+                    Bound::Excluded(y)
+                }
+            }
+            (Bound::Unbounded, y) => y,
+            (x, Bound::Unbounded) => x,
+        };
         Self(Range {
             start: self.0.start,
-            end,
+            end: min_end,
         })
     }
 }
@@ -296,6 +360,46 @@ mod tests {
                 Range {
                     start: Bound::Included(lit_timestamp_nano(1000)),
                     end: Bound::Excluded(lit_timestamp_nano(2000)),
+                },
+            ),
+            (
+                "lt_and_less",
+                col("time")
+                    .lt(lit_timestamp_nano(1000))
+                    .and(col("time").lt(lit_timestamp_nano(500))),
+                Range {
+                    start: Bound::Unbounded,
+                    end: Bound::Excluded(lit_timestamp_nano(500)),
+                },
+            ),
+            (
+                "lt_and_greater",
+                col("time")
+                    .lt(lit_timestamp_nano(500))
+                    .and(col("time").lt(lit_timestamp_nano(1000))),
+                Range {
+                    start: Bound::Unbounded,
+                    end: Bound::Excluded(lit_timestamp_nano(500)),
+                },
+            ),
+            (
+                "gt_and_greater",
+                col("time")
+                    .gt(lit_timestamp_nano(500))
+                    .and(col("time").gt(lit_timestamp_nano(1000))),
+                Range {
+                    start: Bound::Excluded(lit_timestamp_nano(1000)),
+                    end: Bound::Unbounded,
+                },
+            ),
+            (
+                "gt_and",
+                col("time")
+                    .gt(lit_timestamp_nano(1000))
+                    .and(col("time").gt(lit_timestamp_nano(500))),
+                Range {
+                    start: Bound::Excluded(lit_timestamp_nano(1000)),
+                    end: Bound::Unbounded,
                 },
             ),
             (
