@@ -168,16 +168,8 @@ impl TimeRange {
                     Bound::Excluded(y)
                 }
             }
-            (Bound::Unbounded, y) => match y {
-                Bound::Included(x) => Bound::Included(x),
-                Bound::Excluded(x) => Bound::Excluded(x),
-                Bound::Unbounded => Bound::Unbounded,
-            },
-            (x, Bound::Unbounded) => match x {
-                Bound::Included(x) => Bound::Included(x),
-                Bound::Excluded(x) => Bound::Excluded(x),
-                Bound::Unbounded => Bound::Unbounded,
-            },
+            (Bound::Unbounded, y) => y,
+            (x, Bound::Unbounded) => x,
         };
         Self(Range {
             start: max_start,
@@ -215,16 +207,8 @@ impl TimeRange {
                     Bound::Excluded(y)
                 }
             }
-            (Bound::Unbounded, y) => match y {
-                Bound::Included(x) => Bound::Included(x),
-                Bound::Excluded(x) => Bound::Excluded(x),
-                Bound::Unbounded => Bound::Unbounded,
-            },
-            (x, Bound::Unbounded) => match x {
-                Bound::Included(x) => Bound::Included(x),
-                Bound::Excluded(x) => Bound::Excluded(x),
-                Bound::Unbounded => Bound::Unbounded,
-            },
+            (Bound::Unbounded, y) => y,
+            (x, Bound::Unbounded) => x,
         };
         Self(Range {
             start: self.0.start,
