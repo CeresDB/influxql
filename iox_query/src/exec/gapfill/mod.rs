@@ -27,7 +27,7 @@ use datafusion::{
         expressions::Column,
         metrics::{BaselineMetrics, ExecutionPlanMetricsSet},
         DisplayFormatType, Distribution, ExecutionPlan, Partitioning, PhysicalExpr,
-        SendableRecordBatchStream, Statistics,
+        SendableRecordBatchStream, Statistics, DisplayAs,
     },
     prelude::Expr,
 };
@@ -528,9 +528,15 @@ impl ExecutionPlan for GapFillExec {
         )?))
     }
 
+    fn statistics(&self) -> Statistics {
+        Statistics::default()
+    }
+}
+
+impl DisplayAs for GapFillExec {
     fn fmt_as(&self, t: DisplayFormatType, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match t {
-            DisplayFormatType::Default => {
+            DisplayFormatType::Default | DisplayFormatType::Verbose => {
                 let group_expr: Vec<_> = self.group_expr.iter().map(|e| e.to_string()).collect();
                 let aggr_expr: Vec<_> = self
                     .params
@@ -538,10 +544,10 @@ impl ExecutionPlan for GapFillExec {
                     .iter()
                     .map(|(e, fs)| match fs {
                         FillStrategy::PrevNullAsIntentional => {
-                            format!("LOCF(null-as-intentional, {e})")
+                            format!("LOCF(null-as-intentional, {})", e)
                         }
-                        FillStrategy::PrevNullAsMissing => format!("LOCF({e})"),
-                        FillStrategy::LinearInterpolate => format!("INTERPOLATE({e})"),
+                        FillStrategy::PrevNullAsMissing => format!("LOCF({})", e),
+                        FillStrategy::LinearInterpolate => format!("INTERPOLATE({})", e),
                         FillStrategy::Null => e.to_string(),
                     })
                     .collect();
@@ -559,9 +565,5 @@ impl ExecutionPlan for GapFillExec {
                 )
             }
         }
-    }
-
-    fn statistics(&self) -> Statistics {
-        Statistics::default()
     }
 }

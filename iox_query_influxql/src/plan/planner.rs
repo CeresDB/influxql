@@ -16,6 +16,7 @@ use chrono_tz::Tz;
 use datafusion::catalog::TableReference;
 use datafusion::common::tree_node::{TreeNode, TreeNodeRewriter};
 use datafusion::common::{DFSchema, DFSchemaRef, DataFusionError, Result, ScalarValue, ToDFSchema};
+use datafusion::logical_expr::expr::{ScalarFunction, Alias};
 use datafusion::logical_expr::expr_rewriter::normalize_col;
 use datafusion::logical_expr::logical_plan::builder::project;
 use datafusion::logical_expr::logical_plan::Analyze;
@@ -633,10 +634,10 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
             && fill_option != FillClause::None
         {
             let args = match select_exprs[time_column_index].clone().unalias() {
-                Expr::ScalarFunction {
+                Expr::ScalarFunction(ScalarFunction {
                     fun: BuiltinScalarFunction::DateBin,
                     args,
-                } => args,
+                }) => args,
                 _ => {
                     // The InfluxQL planner adds the `date_bin` function,
                     // so this condition represents an internal failure.
@@ -703,7 +704,7 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
         let select_exprs_post_aggr_no_nulls = select_exprs_post_aggr
             .iter()
             .filter(|expr| match expr {
-                Expr::Alias(expr, _) => !matches!(**expr, Expr::Literal(ScalarValue::Null)),
+                Expr::Alias(Alias{ expr, ..}) => !matches!(**expr, Expr::Literal(ScalarValue::Null)),
                 _ => true,
             })
             .cloned()
@@ -1036,6 +1037,7 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                         vec![expr],
                         distinct,
                         None,
+                        None
                     ))),
                 }
             }
@@ -1049,6 +1051,7 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                         vec![expr],
                         false,
                         None,
+                        None
                     ))),
                 }
             }
@@ -1076,13 +1079,13 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                         "invalid number of arguments for log, expected 2, got 1".to_owned(),
                     ))
                 } else {
-                    Ok(Expr::ScalarFunction {
+                    Ok(Expr::ScalarFunction(ScalarFunction {
                         fun: BuiltinScalarFunction::Log,
                         args: args.into_iter().rev().collect(),
-                    })
+                    }))
                 }
             }
-            fun => Ok(Expr::ScalarFunction { fun, args }),
+            fun => Ok(Expr::ScalarFunction(ScalarFunction { fun, args })),
         }
     }
 

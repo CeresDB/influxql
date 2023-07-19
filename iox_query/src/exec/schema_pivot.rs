@@ -30,7 +30,7 @@ use arrow::{
     error::ArrowError,
     record_batch::RecordBatch,
 };
-use datafusion::error::DataFusionError;
+use datafusion::{error::DataFusionError, physical_plan::DisplayAs};
 use datafusion::{
     common::{DFSchemaRef, ToDFSchema},
     error::{DataFusionError as Error, Result},
@@ -247,14 +247,6 @@ impl ExecutionPlan for SchemaPivotExec {
         Ok(AdapterStream::adapt(self.schema(), rx, handle))
     }
 
-    fn fmt_as(&self, t: DisplayFormatType, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match t {
-            DisplayFormatType::Default => {
-                write!(f, "SchemaPivotExec")
-            }
-        }
-    }
-
     fn metrics(&self) -> Option<MetricsSet> {
         Some(self.metrics.clone_inner())
     }
@@ -264,6 +256,17 @@ impl ExecutionPlan for SchemaPivotExec {
         Statistics::default()
     }
 }
+
+impl DisplayAs for SchemaPivotExec {
+    fn fmt_as(&self, t: DisplayFormatType, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match t {
+            DisplayFormatType::Default | DisplayFormatType::Verbose => {
+                write!(f, "SchemaPivotExec")
+            }
+        }
+    }
+}
+
 
 // Algorithm: for each column we haven't seen a value for yet,
 // check each input row;

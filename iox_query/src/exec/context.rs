@@ -2,8 +2,7 @@ use async_trait::async_trait;
 use datafusion::error::Result;
 use datafusion::execution::context::{QueryPlanner, SessionState};
 use datafusion::logical_expr::UserDefinedLogicalNode;
-use datafusion::physical_plan::planner::{DefaultPhysicalPlanner, ExtensionPlanner};
-use datafusion::physical_plan::PhysicalPlanner;
+use datafusion::physical_planner::{PhysicalPlanner, DefaultPhysicalPlanner, ExtensionPlanner};
 use datafusion::{logical_expr::LogicalPlan, physical_plan::ExecutionPlan, prelude::*};
 use std::sync::Arc;
 

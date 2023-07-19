@@ -68,7 +68,7 @@ use datafusion::{
         expressions::PhysicalSortExpr,
         metrics::{BaselineMetrics, ExecutionPlanMetricsSet, MetricsSet, RecordOutput},
         ColumnarValue, DisplayFormatType, Distribution, ExecutionPlan, Partitioning, PhysicalExpr,
-        SendableRecordBatchStream, Statistics,
+        SendableRecordBatchStream, Statistics, DisplayAs,
     },
     scalar::ScalarValue,
 };
@@ -270,14 +270,6 @@ impl ExecutionPlan for StreamSplitExec {
         }
     }
 
-    fn fmt_as(&self, t: DisplayFormatType, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match t {
-            DisplayFormatType::Default => {
-                write!(f, "StreamSplitExec")
-            }
-        }
-    }
-
     fn metrics(&self) -> Option<MetricsSet> {
         Some(self.metrics.clone_inner())
     }
@@ -286,6 +278,16 @@ impl ExecutionPlan for StreamSplitExec {
         // For now, don't return any statistics (in the future we
         // could potentially estimate the output cardinalities)
         Statistics::default()
+    }
+}
+
+impl DisplayAs for StreamSplitExec {
+    fn fmt_as(&self, t: DisplayFormatType, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match t {
+            DisplayFormatType::Default | DisplayFormatType::Verbose => {
+                write!(f, "StreamSplitExec")
+            }
+        }
     }
 }
 

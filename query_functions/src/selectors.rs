@@ -103,7 +103,7 @@ use arrow::{
 };
 use datafusion::{
     error::{DataFusionError, Result as DataFusionResult},
-    logical_expr::{AccumulatorFunctionImplementation, Signature, TypeSignature, Volatility},
+    logical_expr::{AccumulatorFactoryFunction, Signature, TypeSignature, Volatility},
     physical_plan::{udaf::AggregateUDF, Accumulator},
     prelude::SessionContext,
     scalar::ScalarValue,
@@ -363,7 +363,7 @@ impl FactoryBuilder {
     }
 
     /// Returns a function that instantiates the accumulator, consuming self
-    fn build_accumulator_factory(self) -> AccumulatorFunctionImplementation {
+    fn build_accumulator_factory(self) -> AccumulatorFactoryFunction {
         let Self {
             selector_type,
             output_type,
