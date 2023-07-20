@@ -545,7 +545,7 @@ dependencies = [
 [[package]]
 name = "datafusion"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "ahash",
  "arrow",
@@ -588,7 +588,7 @@ dependencies = [
 [[package]]
 name = "datafusion-common"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "arrow",
  "arrow-array",
@@ -602,7 +602,7 @@ dependencies = [
 [[package]]
 name = "datafusion-execution"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "dashmap",
  "datafusion-common",
@@ -619,7 +619,7 @@ dependencies = [
 [[package]]
 name = "datafusion-expr"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "ahash",
  "arrow",
@@ -633,7 +633,7 @@ dependencies = [
 [[package]]
 name = "datafusion-optimizer"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -650,7 +650,7 @@ dependencies = [
 [[package]]
 name = "datafusion-physical-expr"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "ahash",
  "arrow",
@@ -677,7 +677,7 @@ dependencies = [
 [[package]]
 name = "datafusion-row"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "arrow",
  "datafusion-common",
@@ -688,7 +688,7 @@ dependencies = [
 [[package]]
 name = "datafusion-sql"
 version = "27.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
 dependencies = [
  "arrow",
  "arrow-schema",
