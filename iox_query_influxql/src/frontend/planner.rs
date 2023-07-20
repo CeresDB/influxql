@@ -12,7 +12,9 @@ use datafusion::datasource::provider_as_source;
 use datafusion::execution::context::{SessionState, TaskContext};
 use datafusion::logical_expr::{AggregateUDF, LogicalPlan, ScalarUDF, TableSource};
 use datafusion::physical_expr::PhysicalSortExpr;
-use datafusion::physical_plan::{Partitioning, SendableRecordBatchStream, DisplayAs, DisplayFormatType};
+use datafusion::physical_plan::{
+    DisplayAs, DisplayFormatType, Partitioning, SendableRecordBatchStream,
+};
 use datafusion::{
     error::{DataFusionError, Result},
     physical_plan::ExecutionPlan,

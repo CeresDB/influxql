@@ -8,7 +8,9 @@
 //!
 //! NOTE
 use datafusion::common::{DataFusionError, Result};
-use datafusion::logical_expr::expr::{AggregateUDF, Alias, InList, ScalarFunction, ScalarUDF, InSubquery, Placeholder};
+use datafusion::logical_expr::expr::{
+    AggregateUDF, Alias, InList, InSubquery, Placeholder, ScalarFunction, ScalarUDF,
+};
 use datafusion::logical_expr::{
     expr::{
         AggregateFunction, Between, BinaryExpr, Case, Cast, Expr, GetIndexedField, GroupingSet,
@@ -56,7 +58,7 @@ where
                     args,
                     distinct,
                     filter,
-                    order_by
+                    order_by,
                 }) => Ok(Expr::AggregateFunction(AggregateFunction::new(
                     fun.clone(),
                     args.iter()
@@ -64,7 +66,7 @@ where
                         .collect::<Result<Vec<Expr>>>()?,
                     *distinct,
                     filter.clone(),
-                    order_by.clone()
+                    order_by.clone(),
                 ))),
                 Expr::WindowFunction(WindowFunction {
                     fun,
@@ -87,16 +89,21 @@ where
                         .collect::<Result<Vec<_>>>()?,
                     window_frame.clone(),
                 ))),
-                Expr::AggregateUDF(AggregateUDF { fun, args, filter , order_by}) => Ok(Expr::AggregateUDF(AggregateUDF {
+                Expr::AggregateUDF(AggregateUDF {
+                    fun,
+                    args,
+                    filter,
+                    order_by,
+                }) => Ok(Expr::AggregateUDF(AggregateUDF {
                     fun: fun.clone(),
                     args: args
                         .iter()
                         .map(|e| clone_with_replacement(e, replacement_fn))
                         .collect::<Result<Vec<Expr>>>()?,
                     filter: filter.clone(),
-                    order_by: order_by.clone()
+                    order_by: order_by.clone(),
                 })),
-                Expr::Alias(Alias{ expr, name}) => Ok(Expr::Alias(Alias {
+                Expr::Alias(Alias { expr, name }) => Ok(Expr::Alias(Alias {
                     expr: Box::new(clone_with_replacement(expr, replacement_fn)?),
                     name: name.clone(),
                 })),
@@ -135,33 +142,26 @@ where
                     expr,
                     pattern,
                     escape_char,
+                    case_insensitive,
                 }) => Ok(Expr::Like(Like::new(
                     *negated,
                     Box::new(clone_with_replacement(expr, replacement_fn)?),
                     Box::new(clone_with_replacement(pattern, replacement_fn)?),
                     *escape_char,
-                ))),
-                Expr::ILike(Like {
-                    negated,
-                    expr,
-                    pattern,
-                    escape_char,
-                }) => Ok(Expr::ILike(Like::new(
-                    *negated,
-                    Box::new(clone_with_replacement(expr, replacement_fn)?),
-                    Box::new(clone_with_replacement(pattern, replacement_fn)?),
-                    *escape_char,
+                    *case_insensitive,
                 ))),
                 Expr::SimilarTo(Like {
                     negated,
                     expr,
                     pattern,
                     escape_char,
+                    case_insensitive,
                 }) => Ok(Expr::SimilarTo(Like::new(
                     *negated,
                     Box::new(clone_with_replacement(expr, replacement_fn)?),
                     Box::new(clone_with_replacement(pattern, replacement_fn)?),
                     *escape_char,
+                    *case_insensitive,
                 ))),
                 Expr::Case(case) => Ok(Expr::Case(Case::new(
                     match &case.expr {
@@ -186,13 +186,15 @@ where
                         None => None,
                     },
                 ))),
-                Expr::ScalarFunction(ScalarFunction { fun, args }) => Ok(Expr::ScalarFunction(ScalarFunction {
-                    fun: fun.clone(),
-                    args: args
-                        .iter()
-                        .map(|e| clone_with_replacement(e, replacement_fn))
-                        .collect::<Result<Vec<Expr>>>()?,
-                })),
+                Expr::ScalarFunction(ScalarFunction { fun, args }) => {
+                    Ok(Expr::ScalarFunction(ScalarFunction {
+                        fun: fun.clone(),
+                        args: args
+                            .iter()
+                            .map(|e| clone_with_replacement(e, replacement_fn))
+                            .collect::<Result<Vec<Expr>>>()?,
+                    }))
+                }
                 Expr::ScalarUDF(ScalarUDF { fun, args }) => Ok(Expr::ScalarUDF(ScalarUDF {
                     fun: fun.clone(),
                     args: args
@@ -305,10 +307,12 @@ where
                         )))
                     }
                 },
-                Expr::Placeholder(Placeholder { id, data_type }) => Ok(Expr::Placeholder(Placeholder {
-                    id: id.clone(),
-                    data_type: data_type.clone(),
-                })),
+                Expr::Placeholder(Placeholder { id, data_type }) => {
+                    Ok(Expr::Placeholder(Placeholder {
+                        id: id.clone(),
+                        data_type: data_type.clone(),
+                    }))
+                }
             }
         }
     }

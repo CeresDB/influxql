@@ -26,8 +26,8 @@ use datafusion::{
     physical_plan::{
         expressions::Column,
         metrics::{BaselineMetrics, ExecutionPlanMetricsSet},
-        DisplayFormatType, Distribution, ExecutionPlan, Partitioning, PhysicalExpr,
-        SendableRecordBatchStream, Statistics, DisplayAs,
+        DisplayAs, DisplayFormatType, Distribution, ExecutionPlan, Partitioning, PhysicalExpr,
+        SendableRecordBatchStream, Statistics,
     },
     prelude::Expr,
 };

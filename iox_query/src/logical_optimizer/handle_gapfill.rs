@@ -8,8 +8,9 @@ use datafusion::{
     common::tree_node::{RewriteRecursion, TreeNode, TreeNodeRewriter, VisitRecursion},
     error::{DataFusionError, Result},
     logical_expr::{
-        utils::expr_to_columns, Aggregate, BuiltinScalarFunction, Extension, LogicalPlan,
-        Projection, expr::{ScalarUDF, ScalarFunction},
+        expr::{ScalarFunction, ScalarUDF},
+        utils::expr_to_columns,
+        Aggregate, BuiltinScalarFunction, Extension, LogicalPlan, Projection,
     },
     optimizer::{optimizer::ApplyOrder, OptimizerConfig, OptimizerRule},
     prelude::{col, Expr},
@@ -397,7 +398,9 @@ fn handle_projection(proj: &Projection) -> Result<Option<LogicalPlan>> {
         .iter()
         .cloned()
         .map(|e| match e {
-            Expr::ScalarUDF(ScalarUDF { fun, mut args }) if fun.name == LOCF_UDF_NAME => args.remove(0),
+            Expr::ScalarUDF(ScalarUDF { fun, mut args }) if fun.name == LOCF_UDF_NAME => {
+                args.remove(0)
+            }
             _ => e,
         })
         .collect();

@@ -1,7 +1,10 @@
 use datafusion::{
     common::{tree_node::TreeNodeRewriter, DFSchema},
     error::DataFusionError,
-    logical_expr::{utils::from_plan, LogicalPlan, Operator, expr_rewriter::rewrite_preserving_name, expr::ScalarUDF},
+    logical_expr::{
+        expr::ScalarUDF, expr_rewriter::rewrite_preserving_name, utils::from_plan, LogicalPlan,
+        Operator,
+    },
     optimizer::{OptimizerConfig, OptimizerRule},
     prelude::{binary_expr, lit, Expr},
     scalar::ScalarValue,
@@ -88,7 +91,7 @@ impl TreeNodeRewriter for InfluxRegexToDataFusionRegex {
                     }
                 }
 
-                Ok(Expr::ScalarUDF(ScalarUDF{ fun, args }))
+                Ok(Expr::ScalarUDF(ScalarUDF { fun, args }))
             }
             _ => Ok(expr),
         }

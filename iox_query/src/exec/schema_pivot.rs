@@ -30,7 +30,6 @@ use arrow::{
     error::ArrowError,
     record_batch::RecordBatch,
 };
-use datafusion::{error::DataFusionError, physical_plan::DisplayAs};
 use datafusion::{
     common::{DFSchemaRef, ToDFSchema},
     error::{DataFusionError as Error, Result},
@@ -43,6 +42,7 @@ use datafusion::{
         Statistics,
     },
 };
+use datafusion::{error::DataFusionError, physical_plan::DisplayAs};
 
 use datafusion_util::{watch::WatchedTask, AdapterStream};
 use observability_deps::tracing::debug;
@@ -266,7 +266,6 @@ impl DisplayAs for SchemaPivotExec {
         }
     }
 }
-
 
 // Algorithm: for each column we haven't seen a value for yet,
 // check each input row;

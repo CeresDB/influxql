@@ -67,8 +67,8 @@ use datafusion::{
     physical_plan::{
         expressions::PhysicalSortExpr,
         metrics::{BaselineMetrics, ExecutionPlanMetricsSet, MetricsSet, RecordOutput},
-        ColumnarValue, DisplayFormatType, Distribution, ExecutionPlan, Partitioning, PhysicalExpr,
-        SendableRecordBatchStream, Statistics, DisplayAs,
+        ColumnarValue, DisplayAs, DisplayFormatType, Distribution, ExecutionPlan, Partitioning,
+        PhysicalExpr, SendableRecordBatchStream, Statistics,
     },
     scalar::ScalarValue,
 };

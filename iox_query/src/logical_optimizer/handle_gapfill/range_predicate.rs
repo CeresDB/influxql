@@ -7,7 +7,7 @@ use datafusion::{
         DFSchema,
     },
     error::Result,
-    logical_expr::{Between, BinaryExpr, LogicalPlan, Operator, expr::Alias},
+    logical_expr::{expr::Alias, Between, BinaryExpr, LogicalPlan, Operator},
     optimizer::utils::split_conjunction,
     prelude::{Column, Expr},
 };
