@@ -12,7 +12,9 @@ use datafusion::datasource::provider_as_source;
 use datafusion::execution::context::{SessionState, TaskContext};
 use datafusion::logical_expr::{AggregateUDF, LogicalPlan, ScalarUDF, TableSource};
 use datafusion::physical_expr::PhysicalSortExpr;
-use datafusion::physical_plan::{Partitioning, SendableRecordBatchStream};
+use datafusion::physical_plan::{
+    DisplayAs, DisplayFormatType, Partitioning, SendableRecordBatchStream,
+};
 use datafusion::{
     error::{DataFusionError, Result},
     physical_plan::ExecutionPlan,
@@ -111,6 +113,16 @@ impl ExecutionPlan for SchemaExec {
 
     fn statistics(&self) -> Statistics {
         self.input.statistics()
+    }
+}
+
+impl DisplayAs for SchemaExec {
+    fn fmt_as(&self, t: DisplayFormatType, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match t {
+            DisplayFormatType::Default | DisplayFormatType::Verbose => {
+                write!(f, "SchemaExec")
+            }
+        }
     }
 }
 
