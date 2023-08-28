@@ -545,7 +545,7 @@ dependencies = [
 [[package]]
 name = "datafusion"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "ahash",
  "arrow",
@@ -588,7 +588,7 @@ dependencies = [
 [[package]]
 name = "datafusion-common"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "arrow",
  "arrow-array",
@@ -602,7 +602,7 @@ dependencies = [
 [[package]]
 name = "datafusion-execution"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "dashmap",
  "datafusion-common",
@@ -619,7 +619,7 @@ dependencies = [
 [[package]]
 name = "datafusion-expr"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "ahash",
  "arrow",
@@ -633,7 +633,7 @@ dependencies = [
 [[package]]
 name = "datafusion-optimizer"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -650,7 +650,7 @@ dependencies = [
 [[package]]
 name = "datafusion-physical-expr"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "ahash",
  "arrow",
@@ -677,7 +677,7 @@ dependencies = [
 [[package]]
 name = "datafusion-row"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "arrow",
  "datafusion-common",
@@ -688,7 +688,7 @@ dependencies = [
 [[package]]
 name = "datafusion-sql"
 version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=a6dcd943051a083693c352c6b4279156548490a0#a6dcd943051a083693c352c6b4279156548490a0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=b7dd022b03837086f98bced13111f996016744f0#b7dd022b03837086f98bced13111f996016744f0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -2067,9 +2067,8 @@ checksum = "5e9f0ab6ef7eb7353d9119c170a436d1bf248eea575ac42d19d12f4e34130831"
 
 [[package]]
 name = "sqlparser"
-version = "0.35.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca597d77c98894be1f965f2e4e2d2a61575d4998088e655476c73715c54b2b43"
+version = "0.37.0"
+source = "git+https://github.com/chunshao90/sqlparser-rs?rev=da6fd5aee67ae335ac2630944cb092da54510aa1#da6fd5aee67ae335ac2630944cb092da54510aa1"
 dependencies = [
  "log",
  "sqlparser_derive",
@@ -2078,8 +2077,7 @@ dependencies = [
 [[package]]
 name = "sqlparser_derive"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "55fe75cb4a364c7f7ae06c7dbbc8d84bddd85d6cdf9975963c3935bc1991761e"
+source = "git+https://github.com/chunshao90/sqlparser-rs?rev=da6fd5aee67ae335ac2630944cb092da54510aa1#da6fd5aee67ae335ac2630944cb092da54510aa1"
 dependencies = [
  "proc-macro2",
  "quote",
