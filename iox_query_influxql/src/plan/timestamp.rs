@@ -25,6 +25,7 @@ fn parse_timestamp_utc(s: &str) -> Result<DateTime<FixedOffset>> {
 fn parse_timestamp_tz(s: &str, tz: chrono_tz::Tz) -> Result<DateTime<FixedOffset>> {
     // 1a. Try a date time format string with nanosecond precision
     //    https://github.com/influxdata/influxql/blob/1ba470371ec093d57a726b143fe6ccbacf1b452b/ast.go#L3661
+    #[allow(deprecated)]
     tz.datetime_from_str(s, "%Y-%m-%d %H:%M:%S%.f")
         // 1a. Try a date time format string without nanosecond precision
         .or_else(|_| tz.datetime_from_str(s, "%Y-%m-%d %H:%M:%S"))
