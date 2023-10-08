@@ -277,10 +277,10 @@ mod test {
         );
 
         // escaped characters
-        let (_, got) = single_quoted_string(r#"'\n\''"#).unwrap();
+        let (_, got) = single_quoted_string(r"'\n\''").unwrap();
         assert_eq!(got, "\n'");
 
-        let (_, got) = single_quoted_string(r#"'\'hello\''"#).unwrap();
+        let (_, got) = single_quoted_string(r"'\'hello\''").unwrap();
         assert_eq!(got, "'hello'");
 
         // literal tab
@@ -307,8 +307,8 @@ mod test {
 
         // Invalid escape
         assert_expect_error!(
-            single_quoted_string(r#"'quick\idraw'"#),
-            r#"invalid escape sequence, expected \\, \' or \n"#
+            single_quoted_string(r"'quick\idraw'"),
+            r"invalid escape sequence, expected \\, \' or \n"
         );
     }
 
@@ -322,11 +322,11 @@ mod test {
         assert_eq!(got, "/this/is/a/path".into());
 
         // ignores any other possible escape sequence
-        let (_, got) = regex(r#"/hello\n/"#).unwrap();
+        let (_, got) = regex(r"/hello\n/").unwrap();
         assert_eq!(got, "hello\\n".into());
 
         // can parse possible escape sequence at beginning of regex
-        let (_, got) = regex(r#"/\w.*/"#).unwrap();
+        let (_, got) = regex(r"/\w.*/").unwrap();
         assert_eq!(got, "\\w.*".into());
 
         // Empty regex
@@ -344,6 +344,6 @@ mod test {
 
         // Single backslash fails, which matches Go implementation
         // See: https://go.dev/play/p/_8J1v5-382G
-        assert_expect_error!(regex(r#"/\/"#), "unterminated regex literal");
+        assert_expect_error!(regex(r"/\/"), "unterminated regex literal");
     }
 }
