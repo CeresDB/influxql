@@ -6,7 +6,7 @@ mod interpolate;
 use std::{ops::Range, sync::Arc};
 
 use arrow::{
-    array::{Array, ArrayRef, TimestampNanosecondArray, UInt64Array, PrimitiveArray},
+    array::{Array, ArrayRef, PrimitiveArray, TimestampNanosecondArray, UInt64Array},
     compute::kernels::take,
     datatypes::SchemaRef,
     record_batch::RecordBatch,
@@ -153,7 +153,9 @@ impl GapFiller {
             .iter()
             .map(|(_, arr)| Arc::clone(arr))
             .collect::<Vec<_>>();
-        let mut ranges = arrow::compute::partition(&sort_columns)?.ranges().into_iter();
+        let mut ranges = arrow::compute::partition(&sort_columns)?
+            .ranges()
+            .into_iter();
 
         let mut series_ends = vec![];
         let mut cursor = self.cursor.clone_for_aggr_col(None)?;
@@ -937,9 +939,9 @@ impl StashedAggrBuilder<'_> {
     /// `input_aggr_array` at `offset` for use with the [`interleave`](arrow::compute::interleave)
     /// kernel.
     fn create_stash(input_aggr_array: &ArrayRef, offset: u64) -> Result<ArrayRef> {
-        let take_arr:PrimitiveArray<_> = vec![None, Some(offset)].into();
+        let take_arr: PrimitiveArray<_> = vec![None, Some(offset)].into();
         let stash =
-        take::take(input_aggr_array, &take_arr, None).map_err(DataFusionError::ArrowError)?;
+            take::take(input_aggr_array, &take_arr, None).map_err(DataFusionError::ArrowError)?;
         Ok(stash)
     }
 
