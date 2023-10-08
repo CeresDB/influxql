@@ -507,7 +507,7 @@ mod test {
     }
 
     fn optimize(plan: &LogicalPlan) -> Result<Option<LogicalPlan>> {
-        let optimizer = Optimizer::with_rules(vec![Arc::new(HandleGapFill::default())]);
+        let optimizer = Optimizer::with_rules(vec![Arc::new(HandleGapFill)]);
         optimizer.optimize_recursively(
             optimizer.rules.get(0).unwrap(),
             plan,

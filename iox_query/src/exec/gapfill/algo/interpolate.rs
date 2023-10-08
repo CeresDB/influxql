@@ -365,7 +365,7 @@ mod test {
         let arr = cursor
             .build_aggr_fill_interpolate(&params, &series_ends, &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -382,7 +382,7 @@ mod test {
         - "| 1970-01-01T00:00:00.000001900Z | 0    |"
         - "| 1970-01-01T00:00:00.000002Z    |      |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -437,7 +437,7 @@ mod test {
         let arr = cursor
             .build_aggr_fill_interpolate(&params, &series_ends, &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -454,7 +454,7 @@ mod test {
         - "| 1970-01-01T00:00:00.000001900Z | 0    |"
         - "| 1970-01-01T00:00:00.000002Z    |      |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -509,7 +509,7 @@ mod test {
         let arr = cursor
             .build_aggr_fill_interpolate(&params, &series_ends, &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+--------+
         - "| time                           | a0     |"
@@ -526,7 +526,7 @@ mod test {
         - "| 1970-01-01T00:00:00.000001900Z | 0.0    |"
         - "| 1970-01-01T00:00:00.000002Z    |        |"
         - +--------------------------------+--------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
