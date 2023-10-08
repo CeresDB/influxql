@@ -66,7 +66,7 @@ pub(crate) fn single_quoted_string(i: &str) -> ParseResult<&str, String> {
     let escaped = preceded(
         char('\\'),
         expect(
-            r#"invalid escape sequence, expected \\, \' or \n"#,
+            r"invalid escape sequence, expected \\, \' or \n",
             alt((char('\\'), char('\''), value('\n', char('n')))),
         ),
     );
@@ -318,7 +318,7 @@ mod test {
         assert_eq!(got, "hello".into());
 
         // handle escaped delimiters "\/"
-        let (_, got) = regex(r#"/\/this\/is\/a\/path/"#).unwrap();
+        let (_, got) = regex(r"/\/this\/is\/a\/path/").unwrap();
         assert_eq!(got, "/this/is/a/path".into());
 
         // ignores any other possible escape sequence
