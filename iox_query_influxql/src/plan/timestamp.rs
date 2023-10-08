@@ -1,6 +1,5 @@
 use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, NaiveTime, Offset, TimeZone};
 use datafusion::common::{DataFusionError, Result};
-
 /// Parse the timestamp string and return a DateTime in UTC.
 fn parse_timestamp_utc(s: &str) -> Result<DateTime<FixedOffset>> {
     // 1a. Try a date time format string with nanosecond precision and then without
@@ -18,7 +17,7 @@ fn parse_timestamp_utc(s: &str) -> Result<DateTime<FixedOffset>> {
                 NaiveDate::parse_from_str(s, "%Y-%m-%d")
                     .map(|nd| nd.and_time(NaiveTime::default())),
         )
-        .map(|ts| DateTime::from_utc(ts, chrono::Utc.fix()))
+        .map(|ts| DateTime::from_naive_utc_and_offset(ts, chrono::Utc.fix()))
         .map_err(|_| DataFusionError::Plan("invalid timestamp string".into()))
 }
 

@@ -1083,7 +1083,7 @@ struct TestCase {
 impl TestCase {
     fn run(self) -> Result<Vec<RecordBatch>> {
         block_on(async {
-            let session_ctx = SessionContext::with_config(
+            let session_ctx = SessionContext::new_with_config(
                 SessionConfig::default().with_batch_size(self.output_batch_size),
             )
             .into();
@@ -1093,7 +1093,7 @@ impl TestCase {
 
     fn run_with_memory_limit(self, limit: usize) -> Result<Vec<RecordBatch>> {
         block_on(async {
-            let session_ctx = SessionContext::with_config_rt(
+            let session_ctx = SessionContext::new_with_config_rt(
                 SessionConfig::default().with_batch_size(self.output_batch_size),
                 RuntimeEnv::new(RuntimeConfig::default().with_memory_limit(limit, 1.0))?.into(),
             )

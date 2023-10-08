@@ -193,7 +193,12 @@ fn build_gapfill_node(
     let time_column =
         col(new_aggr_plan.schema().fields()[date_bin_gapfill_index].qualified_column());
 
-    let aggr = Aggregate::try_from_plan(&new_aggr_plan)?;
+    let aggr = match &new_aggr_plan {
+        LogicalPlan::Aggregate(it) => Ok(it),
+        _ => Err(DataFusionError::Plan(
+            "Could not coerce into Aggregate!".to_string(),
+        )),
+    }?;
     let mut new_group_expr: Vec<_> = aggr
         .schema
         .fields()
@@ -363,7 +368,7 @@ fn handle_projection(proj: &Projection) -> Result<Option<LogicalPlan>> {
     }) else {
         // If this is not a projection that is a parent to a GapFill node,
         // then there is nothing to do.
-        return Ok(None)
+        return Ok(None);
     };
 
     let fill_cols: Vec<(&Expr, FillStrategy)> = proj_exprs

@@ -23,10 +23,10 @@ use datafusion::logical_expr::logical_plan::Analyze;
 use datafusion::logical_expr::utils::{expr_as_column_expr, find_aggregate_exprs};
 use datafusion::logical_expr::{
     binary_expr, col, date_bin, expr, expr::WindowFunction, lit, lit_timestamp_nano, now,
-    window_function, Aggregate, AggregateFunction, AggregateUDF, Between, BinaryExpr,
-    BuiltInWindowFunction, BuiltinScalarFunction, EmptyRelation, Explain, Expr, ExprSchemable,
-    Extension, LogicalPlan, LogicalPlanBuilder, Operator, PlanType, ScalarUDF, TableSource,
-    ToStringifiedPlan, WindowFrame, WindowFrameBound, WindowFrameUnits,
+    window_function, AggregateFunction, AggregateUDF, Between, BinaryExpr, BuiltInWindowFunction,
+    BuiltinScalarFunction, EmptyRelation, Explain, Expr, ExprSchemable, Extension, LogicalPlan,
+    LogicalPlanBuilder, Operator, PlanType, ScalarUDF, TableSource, ToStringifiedPlan, WindowFrame,
+    WindowFrameBound, WindowFrameUnits,
 };
 use datafusion_util::{lit_dict, AsExpr};
 use generated_types::influxdata::iox::querier::v1::InfluxQlMetadata;
@@ -561,7 +561,9 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
         }
 
         let Some(time_column_index) = find_time_column_index(fields) else {
-            return Err(DataFusionError::Internal("unable to find time column".to_owned()))
+            return Err(DataFusionError::Internal(
+                "unable to find time column".to_owned(),
+            ));
         };
 
         // Find a list of unique aggregate expressions from the projection.
@@ -1153,7 +1155,10 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                 MeasurementSelection::Subquery(_) => Err(DataFusionError::NotImplemented(
                     "subquery in FROM clause".into(),
                 )),
-            }? else { continue };
+            }?
+            else {
+                continue;
+            };
             table_projs.push_back(table_proj);
         }
         Ok(table_projs)
@@ -1230,7 +1235,12 @@ fn build_gap_fill_node(
         )));
     };
 
-    let aggr = Aggregate::try_from_plan(&input)?;
+    let aggr = match &input {
+        LogicalPlan::Aggregate(ref it) => Ok(it),
+        _ => Err(DataFusionError::Plan(
+            "Could not coerce into Aggregate!".to_string(),
+        )),
+    }?;
     let mut new_group_expr: Vec<_> = aggr
         .schema
         .fields()
