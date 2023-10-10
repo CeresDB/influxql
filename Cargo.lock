@@ -615,7 +615,7 @@ dependencies = [
 [[package]]
 name = "datafusion"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "ahash",
  "arrow",
@@ -657,7 +657,7 @@ dependencies = [
 [[package]]
 name = "datafusion-common"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "ahash",
  "arrow",
@@ -675,7 +675,7 @@ dependencies = [
 [[package]]
 name = "datafusion-execution"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "arrow",
  "chrono",
@@ -695,7 +695,7 @@ dependencies = [
 [[package]]
 name = "datafusion-expr"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "ahash",
  "arrow",
@@ -709,7 +709,7 @@ dependencies = [
 [[package]]
 name = "datafusion-optimizer"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "arrow",
  "async-trait",
@@ -726,7 +726,7 @@ dependencies = [
 [[package]]
 name = "datafusion-physical-expr"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "ahash",
  "arrow",
@@ -759,7 +759,7 @@ dependencies = [
 [[package]]
 name = "datafusion-physical-plan"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "ahash",
  "arrow",
@@ -789,7 +789,7 @@ dependencies = [
 [[package]]
 name = "datafusion-sql"
 version = "32.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=219cfb4ccb36045c73409127db51377d66ca0f33#219cfb4ccb36045c73409127db51377d66ca0f33"
+source = "git+https://github.com/apache/arrow-datafusion.git?rev=eca48dae2447a67fcf30313c956e6c39cf739d48#eca48dae2447a67fcf30313c956e6c39cf739d48"
 dependencies = [
  "arrow",
  "arrow-schema",
