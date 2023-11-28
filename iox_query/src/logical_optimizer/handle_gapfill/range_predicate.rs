@@ -70,6 +70,7 @@ impl TreeNodeVisitor for TimeRangeVisitor {
             | LogicalPlan::Repartition(_)
             | LogicalPlan::Limit(_)
             | LogicalPlan::Explain(_)
+            | LogicalPlan::Analyze(_)
             | LogicalPlan::Distinct(_) => Ok(VisitRecursion::Continue),
             // At some point we may wish to handle joins here too.
             _ => Ok(VisitRecursion::Stop),
