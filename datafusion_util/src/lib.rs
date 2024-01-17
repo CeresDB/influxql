@@ -316,7 +316,8 @@ pub fn batch_filter(
         .evaluate(batch)
         .map(|v| v.into_array(batch.num_rows()))
         .and_then(|array| {
-            array?.as_any()
+            array?
+                .as_any()
                 .downcast_ref::<BooleanArray>()
                 .ok_or_else(|| {
                     DataFusionError::Internal(
@@ -325,7 +326,8 @@ pub fn batch_filter(
                 })
                 // apply filter array to record batch
                 .and_then(|filter_array| {
-                    filter_record_batch(batch, filter_array).map_err( |err| DataFusionError::ArrowError(err, None))
+                    filter_record_batch(batch, filter_array)
+                        .map_err(|err| DataFusionError::ArrowError(err, None))
                 })
         })
 }

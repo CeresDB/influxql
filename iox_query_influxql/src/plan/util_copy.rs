@@ -9,7 +9,7 @@
 //! NOTE
 use datafusion::common::{DataFusionError, Result};
 use datafusion::logical_expr::expr::{
-    AggregateUDF, Alias, InList, InSubquery, Placeholder, ScalarFunction
+    AggregateUDF, Alias, InList, InSubquery, Placeholder, ScalarFunction,
 };
 use datafusion::logical_expr::{
     expr::{
@@ -59,15 +59,16 @@ where
                     distinct,
                     filter,
                     order_by,
-                }) => Ok(Expr::AggregateFunction(AggregateFunction{
+                }) => Ok(Expr::AggregateFunction(AggregateFunction {
                     func_def: func_def.clone(),
-                    args:  args.iter()
-                    .map(|e| clone_with_replacement(e, replacement_fn))
-                    .collect::<Result<Vec<Expr>>>()?,
+                    args: args
+                        .iter()
+                        .map(|e| clone_with_replacement(e, replacement_fn))
+                        .collect::<Result<Vec<Expr>>>()?,
                     distinct: *distinct,
                     filter: filter.clone(),
                     order_by: order_by.clone(),
-            })),
+                })),
                 Expr::WindowFunction(WindowFunction {
                     fun,
                     args,
@@ -89,7 +90,11 @@ where
                         .collect::<Result<Vec<_>>>()?,
                     window_frame.clone(),
                 ))),
-                Expr::Alias(Alias { expr, name, relation }) => Ok(Expr::Alias(Alias {
+                Expr::Alias(Alias {
+                    expr,
+                    name,
+                    relation,
+                }) => Ok(Expr::Alias(Alias {
                     expr: Box::new(clone_with_replacement(expr, replacement_fn)?),
                     name: name.clone(),
                     relation: relation.clone(),
@@ -173,7 +178,7 @@ where
                         None => None,
                     },
                 ))),
-                Expr::ScalarFunction(ScalarFunction { func_def, args,  }) => {
+                Expr::ScalarFunction(ScalarFunction { func_def, args }) => {
                     Ok(Expr::ScalarFunction(ScalarFunction {
                         func_def: func_def.clone(),
                         args: args
@@ -181,7 +186,7 @@ where
                             .map(|e| clone_with_replacement(e, replacement_fn))
                             .collect::<Result<Vec<Expr>>>()?,
                     }))
-                },
+                }
                 Expr::Negative(nested_expr) => Ok(Expr::Negative(Box::new(
                     clone_with_replacement(nested_expr, replacement_fn)?,
                 ))),
@@ -251,7 +256,9 @@ where
                     subquery: subquery.clone(),
                     negated: *negated,
                 })),
-                Expr::Wildcard{qualifier} => Ok(Expr::Wildcard{qualifier: qualifier.clone()}),
+                Expr::Wildcard { qualifier } => Ok(Expr::Wildcard {
+                    qualifier: qualifier.clone(),
+                }),
                 Expr::GetIndexedField(GetIndexedField { expr, field }) => {
                     Ok(Expr::GetIndexedField(GetIndexedField::new(
                         Box::new(clone_with_replacement(expr.as_ref(), replacement_fn)?),

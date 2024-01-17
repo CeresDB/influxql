@@ -1060,8 +1060,8 @@ impl TryFrom<TestRecords> for Vec<RecordBatch> {
             arrs.push(arr);
         }
 
-        let one_batch =
-            RecordBatch::try_new(value.schema(), arrs).map_err( |err| DataFusionError::ArrowError(err, None))?;
+        let one_batch = RecordBatch::try_new(value.schema(), arrs)
+            .map_err(|err| DataFusionError::ArrowError(err, None))?;
         let mut batches = vec![];
         let mut offset = 0;
         while offset < one_batch.num_rows() {

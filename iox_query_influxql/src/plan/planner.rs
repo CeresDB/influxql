@@ -16,14 +16,15 @@ use chrono_tz::Tz;
 use datafusion::catalog::TableReference;
 use datafusion::common::tree_node::{TreeNode, TreeNodeRewriter};
 use datafusion::common::{DFSchema, DFSchemaRef, DataFusionError, Result, ScalarValue, ToDFSchema};
-use datafusion::logical_expr::{ScalarFunctionDefinition, self, WindowFunctionDefinition};
 use datafusion::logical_expr::expr::{Alias, ScalarFunction};
 use datafusion::logical_expr::expr_rewriter::normalize_col;
 use datafusion::logical_expr::logical_plan::builder::project;
 use datafusion::logical_expr::logical_plan::Analyze;
 use datafusion::logical_expr::utils::{expr_as_column_expr, find_aggregate_exprs};
+use datafusion::logical_expr::{self, ScalarFunctionDefinition, WindowFunctionDefinition};
 use datafusion::logical_expr::{
-    binary_expr, col, date_bin, expr, expr::WindowFunction, lit, lit_timestamp_nano, now, AggregateFunction, AggregateUDF, Between, BinaryExpr, BuiltInWindowFunction,
+    binary_expr, col, date_bin, expr, expr::WindowFunction, lit, lit_timestamp_nano, now,
+    AggregateFunction, AggregateUDF, Between, BinaryExpr, BuiltInWindowFunction,
     BuiltinScalarFunction, EmptyRelation, Explain, Expr, ExprSchemable, Extension, LogicalPlan,
     LogicalPlanBuilder, Operator, PlanType, ScalarUDF, TableSource, ToStringifiedPlan, WindowFrame,
     WindowFrameBound, WindowFrameUnits,
@@ -636,10 +637,14 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
             && fill_option != FillClause::None
         {
             let args = match select_exprs[time_column_index].clone().unalias() {
-                Expr::ScalarFunction(ScalarFunction {
-                    func_def,
-                    args,
-                }) if matches!(ScalarFunctionDefinition::BuiltIn(BuiltinScalarFunction::DateBin), func_def) => args,
+                Expr::ScalarFunction(ScalarFunction { func_def, args })
+                    if matches!(
+                        ScalarFunctionDefinition::BuiltIn(BuiltinScalarFunction::DateBin),
+                        func_def
+                    ) =>
+                {
+                    args
+                }
                 _ => {
                     // The InfluxQL planner adds the `date_bin` function,
                     // so this condition represents an internal failure.
@@ -1083,10 +1088,13 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                         "invalid number of arguments for log, expected 2, got 1".to_owned(),
                     ))
                 } else {
-                    Ok(Expr::ScalarFunction(ScalarFunction::new(BuiltinScalarFunction::Log, args.into_iter().rev().collect())))
+                    Ok(Expr::ScalarFunction(ScalarFunction::new(
+                        BuiltinScalarFunction::Log,
+                        args.into_iter().rev().collect(),
+                    )))
                 }
             }
-            fun => Ok(Expr::ScalarFunction(ScalarFunction::new(fun,args))),
+            fun => Ok(Expr::ScalarFunction(ScalarFunction::new(fun, args))),
         }
     }
 
@@ -1373,7 +1381,7 @@ fn plan_with_metadata(plan: LogicalPlan, metadata: &InfluxQlMetadata) -> Result<
                         // y.schema = make_schema(Arc::clone(&y.schema), metadata)?;
                         x.input = Arc::new(set_schema(&y.input, metadata)?);
                     }
-                    x.input =  Arc::new(set_schema(&x.input, metadata)?);
+                    x.input = Arc::new(set_schema(&x.input, metadata)?);
                 }
                 // let mut v = match v {
                 //     datafusion::logical_expr::Distinct::On(x) => Arc::new(set_schema(&x.input, metadata)?),
