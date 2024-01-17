@@ -528,8 +528,8 @@ impl ExecutionPlan for GapFillExec {
         )?))
     }
 
-    fn statistics(&self) -> Statistics {
-        Statistics::default()
+    fn statistics(&self) -> std::result::Result<Statistics, DataFusionError> {
+        Ok(Statistics::new_unknown(&self.schema()))
     }
 }
 
