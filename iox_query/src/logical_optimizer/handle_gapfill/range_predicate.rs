@@ -33,16 +33,6 @@ impl TreeNodeVisitor for TimeRangeVisitor {
 
     fn pre_visit(&mut self, plan: &LogicalPlan) -> Result<VisitRecursion> {
         match plan {
-            LogicalPlan::Projection(p) => {
-                let idx = p.schema.index_of_column(&self.col)?;
-                match unwrap_alias(&p.expr[idx]) {
-                    Expr::Column(ref c) => {
-                        self.col = c.clone();
-                        Ok(VisitRecursion::Continue)
-                    }
-                    _ => Ok(VisitRecursion::Stop),
-                }
-            }
             LogicalPlan::Filter(f) => {
                 let range = self.range.clone();
                 let range = split_conjunction(&f.predicate)
@@ -67,8 +57,12 @@ impl TreeNodeVisitor for TimeRangeVisitor {
             }
             // These nodes do not alter their schema, so we can recurse through them
             LogicalPlan::Sort(_)
+            | LogicalPlan::Projection(_)
             | LogicalPlan::Repartition(_)
             | LogicalPlan::Limit(_)
+            | LogicalPlan::Explain(_)
+            | LogicalPlan::Analyze(_)
+            | LogicalPlan::Aggregate(_)
             | LogicalPlan::Distinct(_) => Ok(VisitRecursion::Continue),
             // At some point we may wish to handle joins here too.
             _ => Ok(VisitRecursion::Stop),
