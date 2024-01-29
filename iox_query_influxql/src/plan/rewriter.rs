@@ -22,7 +22,7 @@ use std::ops::{ControlFlow, Deref};
 /// Recursively expand the `from` clause of `stmt` and any subqueries.
 fn rewrite_from(s: &dyn SchemaProvider, stmt: &mut SelectStatement) -> Result<()> {
     let mut new_from = Vec::new();
-    for ms in stmt.from.iter() {
+    for ms in &*stmt.from {
         match ms {
             MeasurementSelection::Name(qmn) => match qmn {
                 QualifiedMeasurementName {
@@ -97,7 +97,7 @@ fn from_field_and_dimensions(
                 ts.extend(tag_set);
             }
             MeasurementSelection::Subquery(select) => {
-                for f in select.fields.iter() {
+                for f in &*select.fields {
                     let dt = match evaluate_type(s, &f.expr, &select.from)? {
                         Some(dt) => dt,
                         None => continue,
@@ -189,7 +189,7 @@ fn has_wildcards(stmt: &SelectStatement) -> (bool, bool) {
 /// Derived from [Go implementation](https://github.com/influxdata/influxql/blob/1ba470371ec093d57a726b143fe6ccbacf1b452b/ast.go#L1185).
 fn rewrite_field_list(s: &dyn SchemaProvider, stmt: &mut SelectStatement) -> Result<()> {
     // Iterate through the `FROM` clause and rewrite any subqueries first.
-    for ms in stmt.from.iter_mut() {
+    for ms in &mut *stmt.from {
         if let MeasurementSelection::Subquery(subquery) = ms {
             rewrite_field_list(s, subquery)?;
         }
@@ -258,7 +258,7 @@ fn rewrite_field_list(s: &dyn SchemaProvider, stmt: &mut SelectStatement) -> Res
     if has_field_wildcard {
         let mut new_fields = Vec::new();
 
-        for f in stmt.fields.iter() {
+        for f in &*stmt.fields {
             let add_field = |f: &VarRef| {
                 new_fields.push(Field {
                     expr: Expr::VarRef(f.clone()),

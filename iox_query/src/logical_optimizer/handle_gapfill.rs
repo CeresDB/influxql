@@ -8,9 +8,8 @@ use datafusion::{
     common::tree_node::{RewriteRecursion, TreeNode, TreeNodeRewriter, VisitRecursion},
     error::{DataFusionError, Result},
     logical_expr::{
-        expr::{ScalarFunction, ScalarUDF},
-        utils::expr_to_columns,
-        Aggregate, BuiltinScalarFunction, Extension, LogicalPlan, Projection,
+        expr::ScalarFunction, utils::expr_to_columns, Aggregate, BuiltinScalarFunction, Extension,
+        LogicalPlan, Projection,
     },
     optimizer::{optimizer::ApplyOrder, OptimizerConfig, OptimizerRule},
     prelude::{col, Expr},
@@ -193,7 +192,12 @@ fn build_gapfill_node(
     let time_column =
         col(new_aggr_plan.schema().fields()[date_bin_gapfill_index].qualified_column());
 
-    let aggr = Aggregate::try_from_plan(&new_aggr_plan)?;
+    let aggr = match &new_aggr_plan {
+        LogicalPlan::Aggregate(it) => Ok(it),
+        _ => Err(DataFusionError::Plan(
+            "Could not coerce into Aggregate!".to_string(),
+        )),
+    }?;
     let mut new_group_expr: Vec<_> = aggr
         .schema
         .fields()
@@ -329,7 +333,9 @@ impl TreeNodeRewriter for DateBinGapfillRewriter {
     type N = Expr;
     fn pre_visit(&mut self, expr: &Expr) -> Result<RewriteRecursion> {
         match expr {
-            Expr::ScalarUDF(ScalarUDF { fun, .. }) if fun.name == DATE_BIN_GAPFILL_UDF_NAME => {
+            Expr::ScalarFunction(ScalarFunction { func_def, .. })
+                if func_def.name() == DATE_BIN_GAPFILL_UDF_NAME =>
+            {
                 Ok(RewriteRecursion::Mutate)
             }
             _ => Ok(RewriteRecursion::Continue),
@@ -338,12 +344,14 @@ impl TreeNodeRewriter for DateBinGapfillRewriter {
 
     fn mutate(&mut self, expr: Expr) -> Result<Expr> {
         match expr {
-            Expr::ScalarUDF(ScalarUDF { fun, args }) if fun.name == DATE_BIN_GAPFILL_UDF_NAME => {
+            Expr::ScalarFunction(ScalarFunction { func_def, args })
+                if func_def.name() == DATE_BIN_GAPFILL_UDF_NAME =>
+            {
                 self.args = Some(args.clone());
-                Ok(Expr::ScalarFunction(ScalarFunction {
-                    fun: BuiltinScalarFunction::DateBin,
+                Ok(Expr::ScalarFunction(ScalarFunction::new(
+                    BuiltinScalarFunction::DateBin,
                     args,
-                }))
+                )))
             }
             _ => Ok(expr),
         }
@@ -363,16 +371,19 @@ fn handle_projection(proj: &Projection) -> Result<Option<LogicalPlan>> {
     }) else {
         // If this is not a projection that is a parent to a GapFill node,
         // then there is nothing to do.
-        return Ok(None)
+        return Ok(None);
     };
 
     let fill_cols: Vec<(&Expr, FillStrategy)> = proj_exprs
         .iter()
         .filter_map(|e| match e {
-            Expr::ScalarUDF(ScalarUDF { fun, args }) if fun.name == LOCF_UDF_NAME => {
+            Expr::ScalarFunction(ScalarFunction { func_def, args })
+                if func_def.name() == LOCF_UDF_NAME =>
+            {
                 let col = &args[0];
                 Some((col, FillStrategy::PrevNullAsMissing))
             }
+
             _ => None,
         })
         .collect();
@@ -398,7 +409,9 @@ fn handle_projection(proj: &Projection) -> Result<Option<LogicalPlan>> {
         .iter()
         .cloned()
         .map(|e| match e {
-            Expr::ScalarUDF(ScalarUDF { fun, mut args }) if fun.name == LOCF_UDF_NAME => {
+            Expr::ScalarFunction(ScalarFunction { func_def, mut args })
+                if func_def.name() == LOCF_UDF_NAME =>
+            {
                 args.remove(0)
             }
             _ => e,
@@ -422,7 +435,7 @@ fn count_udf(e: &Expr, name: &str) -> Result<usize> {
     let mut count = 0;
     e.apply(&mut |expr| {
         match expr {
-            Expr::ScalarUDF(ScalarUDF { fun, .. }) if fun.name == name => {
+            Expr::ScalarFunction(func_def, ..) if func_def.name() == name => {
                 count += 1;
             }
             _ => (),
@@ -457,7 +470,7 @@ mod test {
 
     use arrow::datatypes::{DataType, Field, Schema, TimeUnit};
     use datafusion::error::Result;
-    use datafusion::logical_expr::expr::ScalarUDF;
+    use datafusion::logical_expr::expr::ScalarFunction;
     use datafusion::logical_expr::{logical_plan, LogicalPlan, LogicalPlanBuilder};
     use datafusion::optimizer::optimizer::Optimizer;
     use datafusion::optimizer::OptimizerContext;
@@ -488,21 +501,21 @@ mod test {
     }
 
     fn date_bin_gapfill_with_origin(interval: Expr, time: Expr, origin: Expr) -> Result<Expr> {
-        Ok(Expr::ScalarUDF(ScalarUDF {
-            fun: query_functions::registry().udf(DATE_BIN_GAPFILL_UDF_NAME)?,
-            args: vec![interval, time, origin],
-        }))
+        Ok(Expr::ScalarFunction(ScalarFunction::new_udf(
+            query_functions::registry().udf(DATE_BIN_GAPFILL_UDF_NAME)?,
+            vec![interval, time, origin],
+        )))
     }
 
     fn locf(arg: Expr) -> Result<Expr> {
-        Ok(Expr::ScalarUDF(ScalarUDF {
-            fun: query_functions::registry().udf(LOCF_UDF_NAME)?,
-            args: vec![arg],
-        }))
+        Ok(Expr::ScalarFunction(ScalarFunction::new_udf(
+            query_functions::registry().udf(LOCF_UDF_NAME)?,
+            vec![arg],
+        )))
     }
 
     fn optimize(plan: &LogicalPlan) -> Result<Option<LogicalPlan>> {
-        let optimizer = Optimizer::with_rules(vec![Arc::new(HandleGapFill::default())]);
+        let optimizer = Optimizer::with_rules(vec![Arc::new(HandleGapFill)]);
         optimizer.optimize_recursively(
             optimizer.rules.get(0).unwrap(),
             plan,

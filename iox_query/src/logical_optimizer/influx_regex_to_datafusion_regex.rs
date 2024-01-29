@@ -2,8 +2,7 @@ use datafusion::{
     common::{tree_node::TreeNodeRewriter, DFSchema},
     error::DataFusionError,
     logical_expr::{
-        expr::ScalarUDF, expr_rewriter::rewrite_preserving_name, utils::from_plan, LogicalPlan,
-        Operator,
+        expr::ScalarFunction, expr_rewriter::rewrite_preserving_name, LogicalPlan, Operator,
     },
     optimizer::{OptimizerConfig, OptimizerRule},
     prelude::{binary_expr, lit, Expr},
@@ -67,7 +66,7 @@ fn optimize(plan: &LogicalPlan) -> Result<LogicalPlan, DataFusionError> {
         .map(|expr| rewrite_preserving_name(expr, &mut expr_rewriter))
         .collect::<Result<Vec<_>, DataFusionError>>()?;
 
-    from_plan(plan, new_exprs.as_slice(), new_inputs.as_slice())
+    plan.with_new_exprs(new_exprs, &new_inputs)
 }
 
 impl TreeNodeRewriter for InfluxRegexToDataFusionRegex {
@@ -75,14 +74,14 @@ impl TreeNodeRewriter for InfluxRegexToDataFusionRegex {
 
     fn mutate(&mut self, expr: Expr) -> Result<Expr, DataFusionError> {
         match expr {
-            Expr::ScalarUDF(ScalarUDF { fun, mut args }) => {
+            Expr::ScalarFunction(ScalarFunction { func_def, mut args }) => {
                 if (args.len() == 2)
-                    && ((fun.name == REGEX_MATCH_UDF_NAME)
-                        || (fun.name == REGEX_NOT_MATCH_UDF_NAME))
+                    && ((func_def.name() == REGEX_MATCH_UDF_NAME)
+                        || (func_def.name() == REGEX_NOT_MATCH_UDF_NAME))
                 {
                     if let Expr::Literal(ScalarValue::Utf8(Some(s))) = &args[1] {
                         let s = clean_non_meta_escapes(s);
-                        let op = match fun.name.as_str() {
+                        let op = match func_def.name() {
                             REGEX_MATCH_UDF_NAME => Operator::RegexMatch,
                             REGEX_NOT_MATCH_UDF_NAME => Operator::RegexNotMatch,
                             _ => unreachable!(),
@@ -90,8 +89,7 @@ impl TreeNodeRewriter for InfluxRegexToDataFusionRegex {
                         return Ok(binary_expr(args.remove(0), op, lit(s)));
                     }
                 }
-
-                Ok(Expr::ScalarUDF(ScalarUDF { fun, args }))
+                Ok(Expr::ScalarFunction(ScalarFunction { func_def, args }))
             }
             _ => Ok(expr),
         }

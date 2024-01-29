@@ -109,8 +109,8 @@ impl ToState<String> for &str {
 
 fn make_scalar_struct(data_fields: Vec<ScalarValue>) -> ScalarValue {
     let fields = vec![
-        Field::new("value", data_fields[0].get_datatype(), true),
-        Field::new("time", data_fields[1].get_datatype(), true),
+        Field::new("value", data_fields[0].data_type(), true),
+        Field::new("time", data_fields[1].data_type(), true),
     ];
 
     ScalarValue::Struct(Some(data_fields), Fields::from(fields))
