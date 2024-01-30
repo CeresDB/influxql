@@ -10,5 +10,5 @@ resolver = "2"
 
 [workspace.dependencies]
 arrow = { version = "43.0.0" }
-datafusion = { git = "https://github.com/CeresDB/arrow-datafusion.git", rev = "3ab72627f", default-features = false }
+datafusion = { git = "https://github.com/CeresDB/arrow-datafusion.git", rev = "053a42fa4", default-features = false }
 hashbrown = { version = "0.13.2" }
