@@ -544,8 +544,8 @@ dependencies = [
 
 [[package]]
 name = "datafusion"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "ahash",
  "arrow",
@@ -560,10 +560,10 @@ dependencies = [
  "datafusion-expr",
  "datafusion-optimizer",
  "datafusion-physical-expr",
- "datafusion-row",
  "datafusion-sql",
  "futures",
  "glob",
+ "half",
  "hashbrown 0.14.0",
  "indexmap 2.0.0",
  "itertools 0.11.0",
@@ -587,8 +587,8 @@ dependencies = [
 
 [[package]]
 name = "datafusion-common"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "arrow",
  "arrow-array",
@@ -601,8 +601,8 @@ dependencies = [
 
 [[package]]
 name = "datafusion-execution"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "dashmap",
  "datafusion-common",
@@ -618,8 +618,8 @@ dependencies = [
 
 [[package]]
 name = "datafusion-expr"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "ahash",
  "arrow",
@@ -632,8 +632,8 @@ dependencies = [
 
 [[package]]
 name = "datafusion-optimizer"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "arrow",
  "async-trait",
@@ -649,8 +649,8 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-expr"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "ahash",
  "arrow",
@@ -660,7 +660,6 @@ dependencies = [
  "chrono",
  "datafusion-common",
  "datafusion-expr",
- "datafusion-row",
  "half",
  "hashbrown 0.14.0",
  "indexmap 2.0.0",
@@ -675,20 +674,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "datafusion-row"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
-dependencies = [
- "arrow",
- "datafusion-common",
- "paste",
- "rand",
-]
-
-[[package]]
 name = "datafusion-sql"
-version = "27.0.0"
-source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=9c3a537e25e5ab3299922864034f67fb2f79805d#9c3a537e25e5ab3299922864034f67fb2f79805d"
+version = "28.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=3ab72627f#3ab72627f2bcc6b493f5a320a7dd9f0d261f61b7"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -2067,9 +2055,9 @@ checksum = "5e9f0ab6ef7eb7353d9119c170a436d1bf248eea575ac42d19d12f4e34130831"
 
 [[package]]
 name = "sqlparser"
-version = "0.35.0"
+version = "0.36.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca597d77c98894be1f965f2e4e2d2a61575d4998088e655476c73715c54b2b43"
+checksum = "2eaa1e88e78d2c2460d78b7dc3f0c08dbb606ab4222f9aff36f420d36e307d87"
 dependencies = [
  "log",
  "sqlparser_derive",

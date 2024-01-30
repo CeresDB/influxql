@@ -23,7 +23,7 @@ use datafusion::logical_expr::logical_plan::Analyze;
 use datafusion::logical_expr::utils::{expr_as_column_expr, find_aggregate_exprs};
 use datafusion::logical_expr::{
     binary_expr, col, date_bin, expr, expr::WindowFunction, lit, lit_timestamp_nano, now,
-    window_function, Aggregate, AggregateFunction, AggregateUDF, Between, BinaryExpr,
+    window_function, AggregateFunction, AggregateUDF, Between, BinaryExpr,
     BuiltInWindowFunction, BuiltinScalarFunction, EmptyRelation, Explain, Expr, ExprSchemable,
     Extension, LogicalPlan, LogicalPlanBuilder, Operator, PlanType, ScalarUDF, TableSource,
     ToStringifiedPlan, WindowFrame, WindowFrameBound, WindowFrameUnits,
@@ -1230,7 +1230,12 @@ fn build_gap_fill_node(
         )));
     };
 
-    let aggr = Aggregate::try_from_plan(&input)?;
+     let LogicalPlan::Aggregate(aggr) = &input else {
+        return Err(DataFusionError::Internal(format!(
+            "Expected Aggregate plan, got {}",
+            input.display()
+        )));
+    };
     let mut new_group_expr: Vec<_> = aggr
         .schema
         .fields()
