@@ -7,7 +7,7 @@ use datafusion::{
         DFSchema,
     },
     error::Result,
-    logical_expr::{expr::Alias, Between, BinaryExpr, LogicalPlan, Operator},
+    logical_expr::{Between, BinaryExpr, LogicalPlan, Operator},
     optimizer::utils::split_conjunction,
     prelude::{Column, Expr},
 };
@@ -66,15 +66,6 @@ impl TreeNodeVisitor for TimeRangeVisitor {
             | LogicalPlan::Distinct(_) => Ok(VisitRecursion::Continue),
             // At some point we may wish to handle joins here too.
             _ => Ok(VisitRecursion::Stop),
-        }
-    }
-}
-
-fn unwrap_alias(mut e: &Expr) -> &Expr {
-    loop {
-        match e {
-            Expr::Alias(Alias { expr, .. }) => e = expr.as_ref(),
-            e => break e,
         }
     }
 }

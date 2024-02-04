@@ -21,9 +21,10 @@ use datafusion::logical_expr::expr_rewriter::normalize_col;
 use datafusion::logical_expr::logical_plan::builder::project;
 use datafusion::logical_expr::logical_plan::Analyze;
 use datafusion::logical_expr::utils::{expr_as_column_expr, find_aggregate_exprs};
-use datafusion::logical_expr::{self, ScalarFunctionDefinition, WindowFunctionDefinition};
+use datafusion::logical_expr::{self, ScalarFunctionDefinition};
 use datafusion::logical_expr::{
     binary_expr, col, date_bin, expr, expr::WindowFunction, lit, lit_timestamp_nano, now,
+    window_function,
     AggregateFunction, AggregateUDF, Between, BinaryExpr, BuiltInWindowFunction,
     BuiltinScalarFunction, EmptyRelation, Explain, Expr, ExprSchemable, Extension, LogicalPlan,
     LogicalPlanBuilder, Operator, PlanType, ScalarUDF, TableSource, ToStringifiedPlan, WindowFrame,
@@ -474,7 +475,7 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                 //   ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
                 // ) AS iox::row
                 let window_func_exprs = vec![Expr::WindowFunction(WindowFunction {
-                    fun: WindowFunctionDefinition::BuiltInWindowFunction(
+                    fun: window_function::WindowFunction::BuiltInWindowFunction(
                         BuiltInWindowFunction::RowNumber,
                     ),
                     args: vec![],
@@ -639,8 +640,8 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
             let args = match select_exprs[time_column_index].clone().unalias() {
                 Expr::ScalarFunction(ScalarFunction { func_def, args })
                     if matches!(
-                        ScalarFunctionDefinition::BuiltIn(BuiltinScalarFunction::DateBin),
-                        func_def
+                        func_def,
+                        ScalarFunctionDefinition::BuiltIn{fun: BuiltinScalarFunction::DateBin, ..},
                     ) =>
                 {
                     args

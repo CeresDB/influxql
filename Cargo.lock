@@ -190,7 +190,6 @@ dependencies = [
  "arrow-data",
  "arrow-schema",
  "flatbuffers",
- "lz4_flex",
 ]
 
 [[package]]
@@ -556,13 +555,11 @@ dependencies = [
 
 [[package]]
 name = "datafusion"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "ahash",
  "arrow",
  "arrow-array",
- "arrow-ipc",
  "arrow-schema",
  "async-trait",
  "bytes",
@@ -597,8 +594,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-common"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "ahash",
  "arrow",
@@ -615,8 +611,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-execution"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "arrow",
  "chrono",
@@ -635,8 +630,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-expr"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "ahash",
  "arrow",
@@ -650,8 +644,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-optimizer"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -667,8 +660,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-expr"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "ahash",
  "arrow",
@@ -700,8 +692,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-plan"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "ahash",
  "arrow",
@@ -730,8 +721,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-sql"
-version = "34.0.0"
-source = "git+https://github.com/apache/arrow-datafusion.git?rev=a154884545cfdeb1a6c20872b3882a5624cd1119#a154884545cfdeb1a6c20872b3882a5624cd1119"
+version = "33.0.0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -1350,15 +1340,6 @@ name = "log"
 version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b06a4cde4c0f271a446782e3eff8de789548ce57dbc8eca9292c27f4a42004b4"
-
-[[package]]
-name = "lz4_flex"
-version = "0.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ea9b256699eda7b0387ffbc776dd625e28bde3918446381781245b7a50349d8"
-dependencies = [
- "twox-hash",
-]
 
 [[package]]
 name = "matchers"
@@ -2067,9 +2048,9 @@ dependencies = [
 
 [[package]]
 name = "sqlparser"
-version = "0.41.0"
+version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cc2c25a6c66789625ef164b4c7d2e548d627902280c13710d33da8222169964"
+checksum = "743b4dc2cbde11890ccb254a8fc9d537fa41b36da00de2a1c5e9848c9bc42bd7"
 dependencies = [
  "log",
  "sqlparser_derive",
@@ -2077,13 +2058,13 @@ dependencies = [
 
 [[package]]
 name = "sqlparser_derive"
-version = "0.2.2"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01b2e185515564f15375f593fb966b5718bc624ba77fe49fa4616ad619690554"
+checksum = "55fe75cb4a364c7f7ae06c7dbbc8d84bddd85d6cdf9975963c3935bc1991761e"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.38",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -2346,16 +2327,6 @@ dependencies = [
  "tracing",
  "tracing-core",
  "tracing-log",
-]
-
-[[package]]
-name = "twox-hash"
-version = "1.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
-dependencies = [
- "cfg-if",
- "static_assertions",
 ]
 
 [[package]]

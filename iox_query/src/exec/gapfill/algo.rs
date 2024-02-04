@@ -246,7 +246,7 @@ impl GapFiller {
         output_arrays.sort_by(|(a, _), (b, _)| a.cmp(b));
         let output_arrays: Vec<_> = output_arrays.into_iter().map(|(_, arr)| arr).collect();
         let batch = RecordBatch::try_new(Arc::clone(&schema), output_arrays)
-            .map_err(|err| DataFusionError::ArrowError(err, None))?;
+            .map_err(|err| DataFusionError::ArrowError(err))?;
 
         self.cursor = final_cursor;
         Ok(batch)
@@ -569,7 +569,7 @@ impl Cursor {
 
         let take_arr = UInt64Array::from(aggr_builder.take_idxs);
         take::take(input_aggr_array, &take_arr, None)
-            .map_err(|err| DataFusionError::ArrowError(err, None))
+            .map_err(|err| DataFusionError::ArrowError(err))
     }
 
     /// Builds an array using the [`take`](take::take) kernel
@@ -642,7 +642,7 @@ impl Cursor {
 
         let take_arr = UInt64Array::from(take_idxs);
         take::take(input_aggr_array, &take_arr, None)
-            .map_err(|err| DataFusionError::ArrowError(err, None))
+            .map_err(|err| DataFusionError::ArrowError(err))
     }
 
     /// Builds an array using the [`interleave`](arrow::compute::interleave) kernel
@@ -943,14 +943,14 @@ impl StashedAggrBuilder<'_> {
     fn create_stash(input_aggr_array: &ArrayRef, offset: u64) -> Result<ArrayRef> {
         let take_arr: PrimitiveArray<_> = vec![None, Some(offset)].into();
         let stash = take::take(input_aggr_array, &take_arr, None)
-            .map_err(|err| DataFusionError::ArrowError(err, None))?;
+            .map_err(|err| DataFusionError::ArrowError(err))?;
         Ok(stash)
     }
 
     /// Build the output column.
     fn build(&self) -> Result<ArrayRef> {
         arrow::compute::interleave(&[&self.stash, self.input_aggr_array], &self.interleave_idxs)
-            .map_err(|err| DataFusionError::ArrowError(err, None))
+            .map_err(|err| DataFusionError::ArrowError(err))
     }
 
     fn buffered_input(offset: usize) -> (usize, usize) {

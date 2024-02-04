@@ -435,7 +435,7 @@ fn count_udf(e: &Expr, name: &str) -> Result<usize> {
     let mut count = 0;
     e.apply(&mut |expr| {
         match expr {
-            Expr::ScalarFunction(func_def, ..) if func_def.name() == name => {
+            Expr::ScalarFunction(func_def, ..) if func_def.func_def.name() == name => {
                 count += 1;
             }
             _ => (),

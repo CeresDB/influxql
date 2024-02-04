@@ -54,13 +54,13 @@ where
         None => {
             match expr {
                 Expr::AggregateFunction(AggregateFunction {
-                    func_def,
+                    fun,
                     args,
                     distinct,
                     filter,
                     order_by,
                 }) => Ok(Expr::AggregateFunction(AggregateFunction {
-                    func_def: func_def.clone(),
+                    fun: fun.clone(),
                     args: args
                         .iter()
                         .map(|e| clone_with_replacement(e, replacement_fn))
@@ -90,6 +90,20 @@ where
                         .collect::<Result<Vec<_>>>()?,
                     window_frame.clone(),
                 ))),
+                  Expr::AggregateUDF(AggregateUDF {
+                    fun,
+                    args,
+                    filter,
+                    order_by,
+                }) => Ok(Expr::AggregateUDF(AggregateUDF {
+                    fun: fun.clone(),
+                    args: args
+                        .iter()
+                        .map(|e| clone_with_replacement(e, replacement_fn))
+                        .collect::<Result<Vec<Expr>>>()?,
+                    filter: filter.clone(),
+                    order_by: order_by.clone(),
+                })),
                 Expr::Alias(Alias {
                     expr,
                     name,
