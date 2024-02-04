@@ -1376,18 +1376,8 @@ fn plan_with_metadata(plan: LogicalPlan, metadata: &InfluxQlMetadata) -> Result<
             LogicalPlan::Distinct(src) => {
                 let mut v = src.clone();
                 if let logical_expr::Distinct::On(x) = &mut v {
-                    // x.schema = make_schema(Arc::clone(&x.schema), metadata)?;
-                    if let logical_expr::Distinct::On(y) = &src {
-                        // y.schema = make_schema(Arc::clone(&y.schema), metadata)?;
-                        x.input = Arc::new(set_schema(&y.input, metadata)?);
-                    }
                     x.input = Arc::new(set_schema(&x.input, metadata)?);
                 }
-                // let mut v = match v {
-                //     datafusion::logical_expr::Distinct::On(x) => Arc::new(set_schema(&x.input, metadata)?),
-                //     _ => v,
-                // };
-                // v.input = Arc::new(set_schema(&src.input, metadata)?);
                 LogicalPlan::Distinct(v)
             }
             LogicalPlan::Unnest(src) => {
