@@ -637,17 +637,14 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
             && fill_option != FillClause::None
         {
             let args = match select_exprs[time_column_index].clone().unalias() {
-                Expr::ScalarFunction(ScalarFunction { func_def, args })
-                    if matches!(
-                        func_def,
+                Expr::ScalarFunction(ScalarFunction {
+                    func_def:
                         ScalarFunctionDefinition::BuiltIn {
                             fun: BuiltinScalarFunction::DateBin,
                             ..
                         },
-                    ) =>
-                {
-                    args
-                }
+                    args,
+                }) => args,
                 _ => {
                     // The InfluxQL planner adds the `date_bin` function,
                     // so this condition represents an internal failure.

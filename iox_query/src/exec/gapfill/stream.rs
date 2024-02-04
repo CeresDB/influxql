@@ -195,15 +195,14 @@ impl GapFillStream {
         let old_size = v.iter().map(|rb| rb.get_array_memory_size()).sum();
 
         let mut batch = arrow::compute::concat_batches(&self.schema, &v)
-            .map_err(|err| DataFusionError::ArrowError(err))?;
+            .map_err(DataFusionError::ArrowError)?;
         self.reservation.try_grow(batch.get_array_memory_size())?;
 
         if v.len() > 1 {
             // Optimize the dictionaries. The output of this operator uses the take kernel to produce
             // its output. Since the input batches will usually be smaller than the output, it should
             // be less work to optimize here vs optimizing the output.
-            batch =
-                optimize_dictionaries(&batch).map_err(|err| DataFusionError::ArrowError(err))?;
+            batch = optimize_dictionaries(&batch).map_err(DataFusionError::ArrowError)?;
         }
 
         self.reservation.shrink(old_size);
