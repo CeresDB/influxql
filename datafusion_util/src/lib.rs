@@ -326,8 +326,7 @@ pub fn batch_filter(
                 })
                 // apply filter array to record batch
                 .and_then(|filter_array| {
-                    filter_record_batch(batch, filter_array)
-                        .map_err(|err| DataFusionError::ArrowError(err))
+                    filter_record_batch(batch, filter_array).map_err(DataFusionError::ArrowError)
                 })
         })
 }

@@ -24,8 +24,7 @@ use datafusion::logical_expr::utils::{expr_as_column_expr, find_aggregate_exprs}
 use datafusion::logical_expr::{self, ScalarFunctionDefinition};
 use datafusion::logical_expr::{
     binary_expr, col, date_bin, expr, expr::WindowFunction, lit, lit_timestamp_nano, now,
-    window_function,
-    AggregateFunction, AggregateUDF, Between, BinaryExpr, BuiltInWindowFunction,
+    window_function, AggregateFunction, AggregateUDF, Between, BinaryExpr, BuiltInWindowFunction,
     BuiltinScalarFunction, EmptyRelation, Explain, Expr, ExprSchemable, Extension, LogicalPlan,
     LogicalPlanBuilder, Operator, PlanType, ScalarUDF, TableSource, ToStringifiedPlan, WindowFrame,
     WindowFrameBound, WindowFrameUnits,
@@ -641,7 +640,10 @@ impl<'a> InfluxQLToLogicalPlan<'a> {
                 Expr::ScalarFunction(ScalarFunction { func_def, args })
                     if matches!(
                         func_def,
-                        ScalarFunctionDefinition::BuiltIn{fun: BuiltinScalarFunction::DateBin, ..},
+                        ScalarFunctionDefinition::BuiltIn {
+                            fun: BuiltinScalarFunction::DateBin,
+                            ..
+                        },
                     ) =>
                 {
                     args

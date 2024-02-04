@@ -202,8 +202,8 @@ impl GapFillStream {
             // Optimize the dictionaries. The output of this operator uses the take kernel to produce
             // its output. Since the input batches will usually be smaller than the output, it should
             // be less work to optimize here vs optimizing the output.
-            batch = optimize_dictionaries(&batch)
-                .map_err(|err| DataFusionError::ArrowError(err))?;
+            batch =
+                optimize_dictionaries(&batch).map_err(|err| DataFusionError::ArrowError(err))?;
         }
 
         self.reservation.shrink(old_size);

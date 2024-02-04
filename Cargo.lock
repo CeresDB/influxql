@@ -556,6 +556,7 @@ dependencies = [
 [[package]]
 name = "datafusion"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "ahash",
  "arrow",
@@ -595,6 +596,7 @@ dependencies = [
 [[package]]
 name = "datafusion-common"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "ahash",
  "arrow",
@@ -612,6 +614,7 @@ dependencies = [
 [[package]]
 name = "datafusion-execution"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "arrow",
  "chrono",
@@ -631,6 +634,7 @@ dependencies = [
 [[package]]
 name = "datafusion-expr"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "ahash",
  "arrow",
@@ -645,6 +649,7 @@ dependencies = [
 [[package]]
 name = "datafusion-optimizer"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "arrow",
  "async-trait",
@@ -661,6 +666,7 @@ dependencies = [
 [[package]]
 name = "datafusion-physical-expr"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "ahash",
  "arrow",
@@ -693,6 +699,7 @@ dependencies = [
 [[package]]
 name = "datafusion-physical-plan"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "ahash",
  "arrow",
@@ -722,6 +729,7 @@ dependencies = [
 [[package]]
 name = "datafusion-sql"
 version = "33.0.0"
+source = "git+https://github.com/CeresDB/arrow-datafusion.git?rev=e21b03154#e21b03154511cd61e03e299a595db6be6b1852c1"
 dependencies = [
  "arrow",
  "arrow-schema",

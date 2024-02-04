@@ -90,7 +90,7 @@ where
                         .collect::<Result<Vec<_>>>()?,
                     window_frame.clone(),
                 ))),
-                  Expr::AggregateUDF(AggregateUDF {
+                Expr::AggregateUDF(AggregateUDF {
                     fun,
                     args,
                     filter,
