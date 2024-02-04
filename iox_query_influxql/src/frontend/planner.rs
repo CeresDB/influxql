@@ -111,7 +111,7 @@ impl ExecutionPlan for SchemaExec {
         self.input.execute(partition, context)
     }
 
-    fn statistics(&self) -> Statistics {
+    fn statistics(&self) -> Result<Statistics, DataFusionError> {
         self.input.statistics()
     }
 }

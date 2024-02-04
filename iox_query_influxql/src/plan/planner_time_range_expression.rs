@@ -143,7 +143,7 @@ fn reduce_expr(expr: &Expr, tz: Option<chrono_tz::Tz>) -> ExprResult {
             Literal::Float(v) => Ok(lit(*v)),
             Literal::String(v) => Ok(lit(v.clone())),
             Literal::Timestamp(v) => Ok(lit(ScalarValue::TimestampNanosecond(
-                Some(v.timestamp_nanos()),
+                v.timestamp_nanos_opt(),
                 None,
             ))),
             Literal::Duration(v) => Ok(lit(ScalarValue::new_interval_mdn(0, 0, **v))),
@@ -415,7 +415,7 @@ fn reduce_binary_lhs_string_df_expr(
 
 fn parse_timestamp_nanos(s: &str, tz: Option<chrono_tz::Tz>) -> Result<i64> {
     parse_timestamp(s, tz)
-        .map(|ts| ts.timestamp_nanos())
+        .map(|ts| ts.timestamp_nanos_opt().unwrap())
         .map_err(|_| DataFusionError::Plan(format!("'{s}' is not a valid timestamp")))
 }
 

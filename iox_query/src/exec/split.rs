@@ -274,10 +274,10 @@ impl ExecutionPlan for StreamSplitExec {
         Some(self.metrics.clone_inner())
     }
 
-    fn statistics(&self) -> Statistics {
+    fn statistics(&self) -> std::result::Result<Statistics, datafusion::error::DataFusionError> {
         // For now, don't return any statistics (in the future we
         // could potentially estimate the output cardinalities)
-        Statistics::default()
+        Ok(Statistics::new_unknown(&self.schema()))
     }
 }
 
@@ -490,7 +490,7 @@ fn negate(v: &ColumnarValue) -> Result<ColumnarValue> {
             } else {
                 let msg = format!(
                     "Expected boolean literal, but got type {:?}",
-                    val.get_datatype()
+                    val.data_type()
                 );
                 Err(DataFusionError::Internal(msg))
             }
@@ -515,8 +515,8 @@ fn and(left: &ColumnarValue, right: &ColumnarValue) -> Result<ColumnarValue> {
             } else {
                 let msg = format!(
                     "Expected two boolean literals, but got type {:?} and type {:?}",
-                    val_left.get_datatype(),
-                    val_right.get_datatype()
+                    val_left.data_type(),
+                    val_right.data_type()
                 );
                 Err(DataFusionError::Internal(msg))
             }

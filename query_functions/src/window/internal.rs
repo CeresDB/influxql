@@ -146,7 +146,7 @@ fn timestamp_to_datetime(ts: i64) -> DateTime<Utc> {
     // Note that nsec as u32 is safe here because modulo on a negative ts value
     //  still produces a positive remainder.
     let datetime = NaiveDateTime::from_timestamp_opt(secs, nsec as u32).expect("ts in range");
-    DateTime::from_utc(datetime, Utc)
+    DateTime::from_naive_utc_and_offset(datetime, Utc)
 }
 
 /// Original: <https://github.com/influxdata/flux/blob/1e9bfd49f21c0e679b42acf6fc515ce05c6dec2b/values/time.go#L491>
@@ -198,8 +198,8 @@ fn to_timestamp_nanos_utc(
         NaiveTime::from_hms_nano_opt(hour, min, sec, nano).expect("hour-min-sec-nano in range");
     let ndatetime = NaiveDateTime::new(ndate, ntime);
 
-    let datetime = DateTime::<Utc>::from_utc(ndatetime, Utc);
-    datetime.timestamp_nanos()
+    let datetime = DateTime::<Utc>::from_naive_utc_and_offset(ndatetime, Utc);
+    datetime.timestamp_nanos_opt().unwrap()
 }
 
 impl Add<Duration> for i64 {
@@ -386,7 +386,7 @@ mod tests {
     /// t: mustParseTime("1970-02-01T00:00:00Z"),
     fn must_parse_time(s: &str) -> i64 {
         let datetime = DateTime::parse_from_rfc3339(s).unwrap();
-        datetime.timestamp_nanos()
+        datetime.timestamp_nanos_opt().unwrap()
     }
 
     /// TestWindow_GetEarliestBounds

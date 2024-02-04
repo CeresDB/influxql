@@ -218,7 +218,7 @@ impl GapFillStream {
         let input_time_array = self
             .time_expr
             .evaluate(&input_batch)?
-            .into_array(input_batch.num_rows());
+            .into_array(input_batch.num_rows())?;
         let input_time_array: &TimestampNanosecondArray = input_time_array
             .as_any()
             .downcast_ref()
@@ -261,7 +261,8 @@ impl GapFillStream {
             .map(|e| {
                 Ok((
                     expr_to_index(e),
-                    e.evaluate(input_batch)?.into_array(input_batch.num_rows()),
+                    e.evaluate(input_batch)?
+                        .into_array(input_batch.num_rows())?,
                 ))
             })
             .collect::<Result<Vec<_>>>()
@@ -275,7 +276,8 @@ impl GapFillStream {
             .map(|e| {
                 Ok((
                     expr_to_index(e),
-                    e.evaluate(input_batch)?.into_array(input_batch.num_rows()),
+                    e.evaluate(input_batch)?
+                        .into_array(input_batch.num_rows())?,
                 ))
             })
             .collect::<Result<Vec<_>>>()

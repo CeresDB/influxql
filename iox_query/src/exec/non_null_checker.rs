@@ -276,9 +276,9 @@ impl ExecutionPlan for NonNullCheckerExec {
         Some(self.metrics.clone_inner())
     }
 
-    fn statistics(&self) -> Statistics {
+    fn statistics(&self) -> std::result::Result<Statistics, DataFusionError> {
         // don't know anything about the statistics
-        Statistics::default()
+        Ok(Statistics::new_unknown(&self.schema()))
     }
 }
 

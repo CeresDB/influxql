@@ -6,8 +6,8 @@ mod interpolate;
 use std::{ops::Range, sync::Arc};
 
 use arrow::{
-    array::{Array, ArrayRef, TimestampNanosecondArray, UInt64Array},
-    compute::{kernels::take, SortColumn},
+    array::{Array, ArrayRef, PrimitiveArray, TimestampNanosecondArray, UInt64Array},
+    compute::kernels::take,
     datatypes::SchemaRef,
     record_batch::RecordBatch,
 };
@@ -151,13 +151,11 @@ impl GapFiller {
 
         let sort_columns = group_arr
             .iter()
-            .map(|(_, arr)| SortColumn {
-                values: Arc::clone(arr),
-                options: None,
-            })
+            .map(|(_, arr)| Arc::clone(arr))
             .collect::<Vec<_>>();
-        let mut ranges = arrow::compute::lexicographical_partition_ranges(&sort_columns)
-            .map_err(DataFusionError::ArrowError)?;
+        let mut ranges = arrow::compute::partition(&sort_columns)?
+            .ranges()
+            .into_iter();
 
         let mut series_ends = vec![];
         let mut cursor = self.cursor.clone_for_aggr_col(None)?;
@@ -941,7 +939,7 @@ impl StashedAggrBuilder<'_> {
     /// `input_aggr_array` at `offset` for use with the [`interleave`](arrow::compute::interleave)
     /// kernel.
     fn create_stash(input_aggr_array: &ArrayRef, offset: u64) -> Result<ArrayRef> {
-        let take_arr = vec![None, Some(offset)].into();
+        let take_arr: PrimitiveArray<_> = vec![None, Some(offset)].into();
         let stash =
             take::take(input_aggr_array, &take_arr, None).map_err(DataFusionError::ArrowError)?;
         Ok(stash)
@@ -1170,7 +1168,7 @@ mod tests {
         let arr = cursor
             .build_aggr_fill_null(&params, &[series], &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -1183,7 +1181,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001200Z | 12.0 |"
         - "| 1970-01-01T00:00:00.000001250Z |      |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -1215,7 +1213,7 @@ mod tests {
             .into();
         let arr =
             cursor.build_aggr_fill_null(&params, &[series], &input_times, &input_aggr_array)?;
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -1230,7 +1228,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001200Z | 12.0 |"
         - "| 1970-01-01T00:00:00.000001250Z |      |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
 
@@ -1269,7 +1267,7 @@ mod tests {
         let arr = cursor
             .build_aggr_fill_prev(&params, &[series], &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -1282,7 +1280,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001200Z | 12.0 |"
         - "| 1970-01-01T00:00:00.000001250Z | 12.0 |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -1325,7 +1323,7 @@ mod tests {
         let arr = cursor
             .build_aggr_fill_prev(&params, &[series], &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -1340,7 +1338,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001200Z | 12.0 |"
         - "| 1970-01-01T00:00:00.000001250Z | 12.0 |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -1381,7 +1379,7 @@ mod tests {
         let arr = cursor
             .build_aggr_fill_null(&params, &series_ends, &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -1395,7 +1393,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001050Z | 11.0 |"
         - "| 1970-01-01T00:00:00.000001100Z |      |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -1445,7 +1443,7 @@ mod tests {
         let arr = cursor
             .build_aggr_fill_prev(&params, &series_ends, &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+------+
         - "| time                           | a0   |"
@@ -1459,7 +1457,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001050Z | 21.0 |"
         - "| 1970-01-01T00:00:00.000001100Z | 21.0 |"
         - +--------------------------------+------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }
@@ -1534,7 +1532,7 @@ mod tests {
         let arr = cursor
             .build_aggr_fill_prev_stashed(&params, &series_ends, &input_times, &input_aggr_array)
             .unwrap();
-        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r###"
+        insta::assert_yaml_snapshot!(array_to_lines(&time_arr, &arr), @r#"
         ---
         - +--------------------------------+-------+
         - "| time                           | a0    |"
@@ -1550,7 +1548,7 @@ mod tests {
         - "| 1970-01-01T00:00:00.000001100Z | 21.1  |"
         - "| 1970-01-01T00:00:00.000001150Z | 21.1  |"
         - +--------------------------------+-------+
-        "###);
+        "#);
 
         assert_cursor_end_state(&cursor, &input_times, &params);
     }

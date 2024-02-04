@@ -316,7 +316,7 @@ pub fn batch_filter(
         .evaluate(batch)
         .map(|v| v.into_array(batch.num_rows()))
         .and_then(|array| {
-            array
+            array?
                 .as_any()
                 .downcast_ref::<BooleanArray>()
                 .ok_or_else(|| {
@@ -397,7 +397,7 @@ mod tests {
         let ts_predicate_expr = make_range_expr(101, 202, "time");
         let expected_string =
             "TimestampNanosecond(101, None) <= time AND time < TimestampNanosecond(202, None)";
-        let actual_string = format!("{ts_predicate_expr:?}");
+        let actual_string = ts_predicate_expr.to_string();
 
         assert_eq!(actual_string, expected_string);
     }
