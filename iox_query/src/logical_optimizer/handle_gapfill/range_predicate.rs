@@ -45,7 +45,7 @@ impl TreeNodeVisitor for TimeRangeVisitor {
             }
             LogicalPlan::TableScan(t) => {
                 let source_schema = t.source.schema();
-                let qualifier = t.table_name.clone();
+                let qualifier = &t.table_name;
                 let df_schema = DFSchema::new_with_metadata(
                     source_schema
                         .fields()
