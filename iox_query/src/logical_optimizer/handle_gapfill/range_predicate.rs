@@ -4,7 +4,7 @@ use std::ops::{Bound, Range};
 use datafusion::{
     common::{
         tree_node::{TreeNode, TreeNodeVisitor, VisitRecursion},
-        DFSchema,
+        DFField, DFSchema,
     },
     error::Result,
     logical_expr::{Between, BinaryExpr, LogicalPlan, Operator},
@@ -44,13 +44,22 @@ impl TreeNodeVisitor for TimeRangeVisitor {
                 Ok(VisitRecursion::Continue)
             }
             LogicalPlan::TableScan(t) => {
+                let source_schema = t.source.schema();
+                let df_schema = DFSchema::new_with_metadata(
+                    source_schema
+                        .fields()
+                        .iter()
+                        .map(|f| DFField::from(f.clone()))
+                        .collect(),
+                    source_schema.metadata().clone(),
+                )?;
                 let range = self.range.clone();
                 let range = t
                     .filters
                     .iter()
                     .flat_map(split_conjunction)
                     .try_fold(range, |range, expr| {
-                        range.with_expr(&t.projected_schema, &self.col, expr)
+                        range.with_expr(&df_schema, &self.col, expr)
                     })?;
                 self.range = range;
                 Ok(VisitRecursion::Continue)
