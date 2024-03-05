@@ -45,11 +45,19 @@ impl TreeNodeVisitor for TimeRangeVisitor {
             }
             LogicalPlan::TableScan(t) => {
                 let source_schema = t.source.schema();
+                let qualifier = t.table_name.clone();
                 let df_schema = DFSchema::new_with_metadata(
                     source_schema
                         .fields()
                         .iter()
-                        .map(|f| DFField::from(f.clone()))
+                        .map(|f| {
+                            DFField::new(
+                                Some(qualifier.clone()),
+                                f.name(),
+                                f.data_type().clone(),
+                                f.is_nullable(),
+                            )
+                        })
                         .collect(),
                     source_schema.metadata().clone(),
                 )?;
